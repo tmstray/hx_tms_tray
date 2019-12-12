@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huaxin.cloud.tms.tray.dao.BillInfoMapper">
+    
+    <resultMap type="BillInfo" id="TmsBillInfoResult">
+        <result property="id"    column="ID"    />
+        <result property="cid"    column="CID"    />
+        <result property="lId"    column="L_ID"    />
+        <result property="lCard"    column="L_Card"    />
+        <result property="lType"    column="L_Type"    />
+        <result property="lStock"    column="L_Stock"    />
+        <result property="lStockno"    column="L_StockNo"    />
+        <result property="lTruck"    column="L_Truck"    />
+        <result property="lTruckid"    column="L_TruckID"    />
+        <result property="lValue"    column="L_Value"    />
+        <result property="lCustype"    column="L_CusType"    />
+        <result property="lCusid"    column="L_CusID"    />
+        <result property="lCusname"    column="l_cusName"    />
+        <result property="lCuspy"    column="L_CusPY"    />
+        <result property="lOrder"    column="L_Order"    />
+        <result property="lOrderid"    column="L_OrderID"    />
+        <result property="lSeal"    column="L_Seal"    />
+        <result property="lIsvip"    column="L_IsVIP"    />
+        <result property="lMan"    column="L_Man"    />
+        <result property="lDate"    column="L_Date"    />
+        <result property="lPickdate"    column="L_PickDate"    />
+        <result property="lPickman"    column="L_PickMan"    />
+        <result property="lPostday"    column="L_PostDay"    />
+        <result property="lPostdate"    column="L_PostDate"    />
+        <result property="lPostman"    column="L_PostMan"    />
+        <result property="lFactnum"    column="L_FactNum"    />
+        <result property="lOutnum"    column="L_OutNum"    />
+        <result property="lOutfact"    column="L_OutFact"    />
+        <result property="lStatus"    column="L_Status"    />
+        <result property="lAction"    column="L_Action"    />
+        <result property="lResult"    column="L_Result"    />
+        <result property="lMemo"    column="L_Memo"    />
+        <result property="lCrm"    column="L_CRM"    />
+        <result property="lCrmflag"    column="L_CRMFlag"    />
+        <result property="lExtinfo"    column="L_ExtInfo"    />
+        <result property="lExtres"    column="L_ExtRes"    />
+        <result property="lDelman"    column="L_DelMan"    />
+        <result property="lDeldate"    column="L_DelDate"    />
+        <result property="lCrmitem"    column="L_CRMItem"    />
+        <result property="lVkbur"    column="L_VKBUR"    />
+        <result property="lBezeivk"    column="L_BEZEIVK"    />
+        <result property="lBillbak"    column="L_Billbak"    />
+        <result property="lOrderbak"    column="L_Orderbak"    />
+        <result property="lOffline"    column="L_Offline"    />
+        <result property="lCrmtype"    column="L_CRMType"    />
+        <result property="lEpyflag"    column="L_EPYFlag"    />
+        <result property="lEpytime"    column="L_EPYTime"    />
+        <result property="lEpyman"    column="L_EPYMan"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="deleteStatus"    column="delete_status"    />
+    </resultMap>
+
+    <sql id="selectTmsBillInfoVo">
+        select VBELN from S_BillInfo
+        <!-- select 
+        		 ID, CID, L_ID, L_Card, L_Type, L_Stock, L_StockNo, L_Truck, L_TruckID, L_Value, L_CusType, L_CusID,
+        		 l_cusName, L_CusPY, L_Order, L_OrderID, L_Seal, L_IsVIP, L_Man, L_Date, L_PickDate, L_PickMan, L_PostDay,
+         		 L_PostDate, L_PostMan, L_FactNum, L_OutNum, L_OutFact, L_Status, L_Action, L_Result, L_Memo, L_CRM, L_CRMFlag,
+          		 L_ExtInfo, L_ExtRes, L_DelMan, L_DelDate, L_CRMItem, L_VKBUR, L_BEZEIVK, L_Billbak, L_Orderbak, L_Offline,
+           		 L_CRMType, L_EPYFlag, L_EPYTime, L_EPYMan, create_by, update_by, create_time, update_time, delete_status
+        from
+              	tms_bill_info -->
+    </sql>
+
+    <select id="selectTmsBillInfoList" parameterType="BillInfo" resultMap="TmsBillInfoResult">
+        <include refid="selectTmsBillInfoVo"/>
+        <where>  
+            <if test="cid != null  and cid != ''"> and CID = #{cid}</if>
+            <if test="lId != null  and lId != ''"> and L_ID = #{lId}</if>
+            <if test="lCard != null  and lCard != ''"> and L_Card = #{lCard}</if>
+            <if test="lType != null  and lType != ''"> and L_Type = #{lType}</if>
+            <if test="lStock != null  and lStock != ''"> and L_Stock = #{lStock}</if>
+            <if test="lStockno != null  and lStockno != ''"> and L_StockNo = #{lStockno}</if>
+            <if test="lTruck != null  and lTruck != ''"> and L_Truck = #{lTruck}</if>
+            <if test="lTruckid != null  and lTruckid != ''"> and L_TruckID = #{lTruckid}</if>
+            <if test="lValue != null "> and L_Value = #{lValue}</if>
+            <if test="lCustype != null  and lCustype != ''"> and L_CusType = #{lCustype}</if>
+            <if test="lCusid != null  and lCusid != ''"> and L_CusID = #{lCusid}</if>
+            <if test="lCusname != null  and lCusname != ''"> and l_cusName like concat('%', #{lCusname}, '%')</if>
+            <if test="lCuspy != null  and lCuspy != ''"> and L_CusPY = #{lCuspy}</if>
+            <if test="lOrder != null  and lOrder != ''"> and L_Order = #{lOrder}</if>
+            <if test="lOrderid != null  and lOrderid != ''"> and L_OrderID = #{lOrderid}</if>
+            <if test="lSeal != null  and lSeal != ''"> and L_Seal = #{lSeal}</if>
+            <if test="lIsvip != null  and lIsvip != ''"> and L_IsVIP = #{lIsvip}</if>
+            <if test="lMan != null  and lMan != ''"> and L_Man = #{lMan}</if>
+            <if test="lDate != null "> and L_Date = #{lDate}</if>
+            <if test="lPickdate != null "> and L_PickDate = #{lPickdate}</if>
+            <if test="lPickman != null  and lPickman != ''"> and L_PickMan = #{lPickman}</if>
+            <if test="lPostday != null  and lPostday != ''"> and L_PostDay = #{lPostday}</if>
+            <if test="lPostdate != null "> and L_PostDate = #{lPostdate}</if>
+            <if test="lPostman != null  and lPostman != ''"> and L_PostMan = #{lPostman}</if>
+            <if test="lFactnum != null  and lFactnum != ''"> and L_FactNum = #{lFactnum}</if>
+            <if test="lOutnum != null  and lOutnum != ''"> and L_OutNum = #{lOutnum}</if>
+            <if test="lOutfact != null "> and L_OutFact = #{lOutfact}</if>
+            <if test="lStatus != null  and lStatus != ''"> and L_Status = #{lStatus}</if>
+            <if test="lAction != null  and lAction != ''"> and L_Action = #{lAction}</if>
+            <if test="lResult != null  and lResult != ''"> and L_Result = #{lResult}</if>
+            <if test="lMemo != null  and lMemo != ''"> and L_Memo = #{lMemo}</if>
+            <if test="lCrm != null  and lCrm != ''"> and L_CRM = #{lCrm}</if>
+            <if test="lCrmflag != null  and lCrmflag != ''"> and L_CRMFlag = #{lCrmflag}</if>
+            <if test="lExtinfo != null "> and L_ExtInfo = #{lExtinfo}</if>
+            <if test="lExtres != null "> and L_ExtRes = #{lExtres}</if>
+            <if test="lDelman != null  and lDelman != ''"> and L_DelMan = #{lDelman}</if>
+            <if test="lDeldate != null "> and L_DelDate = #{lDeldate}</if>
+            <if test="lCrmitem != null  and lCrmitem != ''"> and L_CRMItem = #{lCrmitem}</if>
+            <if test="lVkbur != null  and lVkbur != ''"> and L_VKBUR = #{lVkbur}</if>
+            <if test="lBezeivk != null  and lBezeivk != ''"> and L_BEZEIVK = #{lBezeivk}</if>
+            <if test="lBillbak != null  and lBillbak != ''"> and L_Billbak = #{lBillbak}</if>
+            <if test="lOrderbak != null  and lOrderbak != ''"> and L_Orderbak = #{lOrderbak}</if>
+            <if test="lOffline != null  and lOffline != ''"> and L_Offline = #{lOffline}</if>
+            <if test="lCrmtype != null  and lCrmtype != ''"> and L_CRMType = #{lCrmtype}</if>
+            <if test="lEpyflag != null  and lEpyflag != ''"> and L_EPYFlag = #{lEpyflag}</if>
+            <if test="lEpytime != null "> and L_EPYTime = #{lEpytime}</if>
+            <if test="lEpyman != null  and lEpyman != ''"> and L_EPYMan = #{lEpyman}</if>
+            <if test="deleteStatus != null "> and delete_status = #{deleteStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectBillInfoById" parameterType="Integer" resultMap="TmsBillInfoResult">
+        <include refid="selectTmsBillInfoVo"/>
+        where ID = #{id}
+    </select>
+    
+    <!-- <select id="selectBillInfoByLCard" parameterType="String" resultMap="TmsBillInfoResult">
+        <include refid="selectTmsBillInfoVo"/>
+        where L_Card = #{lCard}
+    </select> -->
+    
+    <select id="selectBillInfoByLCard" parameterType="String" resultType="java.lang.String">
+        <include refid="selectTmsBillInfoVo"/>
+        where VBELN = #{lCard}
+    </select>
+        
+    <insert id="insertTmsBillInfo" parameterType="BillInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_tms_bill_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cid != null  and cid != ''">CID,</if>
+            <if test="lId != null  and lId != ''">L_ID,</if>
+            <if test="lCard != null  and lCard != ''">L_Card,</if>
+            <if test="lType != null  and lType != ''">L_Type,</if>
+            <if test="lStock != null  and lStock != ''">L_Stock,</if>
+            <if test="lStockno != null  and lStockno != ''">L_StockNo,</if>
+            <if test="lTruck != null  and lTruck != ''">L_Truck,</if>
+            <if test="lTruckid != null  and lTruckid != ''">L_TruckID,</if>
+            <if test="lValue != null ">L_Value,</if>
+            <if test="lCustype != null  and lCustype != ''">L_CusType,</if>
+            <if test="lCusid != null  and lCusid != ''">L_CusID,</if>
+            <if test="lCusname != null  and lCusname != ''">l_cusName,</if>
+            <if test="lCuspy != null  and lCuspy != ''">L_CusPY,</if>
+            <if test="lOrder != null  and lOrder != ''">L_Order,</if>
+            <if test="lOrderid != null  and lOrderid != ''">L_OrderID,</if>
+            <if test="lSeal != null  and lSeal != ''">L_Seal,</if>
+            <if test="lIsvip != null  and lIsvip != ''">L_IsVIP,</if>
+            <if test="lMan != null  and lMan != ''">L_Man,</if>
+            <if test="lDate != null ">L_Date,</if>
+            <if test="lPickdate != null ">L_PickDate,</if>
+            <if test="lPickman != null  and lPickman != ''">L_PickMan,</if>
+            <if test="lPostday != null  and lPostday != ''">L_PostDay,</if>
+            <if test="lPostdate != null ">L_PostDate,</if>
+            <if test="lPostman != null  and lPostman != ''">L_PostMan,</if>
+            <if test="lFactnum != null  and lFactnum != ''">L_FactNum,</if>
+            <if test="lOutnum != null  and lOutnum != ''">L_OutNum,</if>
+            <if test="lOutfact != null ">L_OutFact,</if>
+            <if test="lStatus != null  and lStatus != ''">L_Status,</if>
+            <if test="lAction != null  and lAction != ''">L_Action,</if>
+            <if test="lResult != null  and lResult != ''">L_Result,</if>
+            <if test="lMemo != null  and lMemo != ''">L_Memo,</if>
+            <if test="lCrm != null  and lCrm != ''">L_CRM,</if>
+            <if test="lCrmflag != null  and lCrmflag != ''">L_CRMFlag,</if>
+            <if test="lExtinfo != null ">L_ExtInfo,</if>
+            <if test="lExtres != null ">L_ExtRes,</if>
+            <if test="lDelman != null  and lDelman != ''">L_DelMan,</if>
+            <if test="lDeldate != null ">L_DelDate,</if>
+            <if test="lCrmitem != null  and lCrmitem != ''">L_CRMItem,</if>
+            <if test="lVkbur != null  and lVkbur != ''">L_VKBUR,</if>
+            <if test="lBezeivk != null  and lBezeivk != ''">L_BEZEIVK,</if>
+            <if test="lBillbak != null  and lBillbak != ''">L_Billbak,</if>
+            <if test="lOrderbak != null  and lOrderbak != ''">L_Orderbak,</if>
+            <if test="lOffline != null  and lOffline != ''">L_Offline,</if>
+            <if test="lCrmtype != null  and lCrmtype != ''">L_CRMType,</if>
+            <if test="lEpyflag != null  and lEpyflag != ''">L_EPYFlag,</if>
+            <if test="lEpytime != null ">L_EPYTime,</if>
+            <if test="lEpyman != null  and lEpyman != ''">L_EPYMan,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="deleteStatus != null ">delete_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cid != null  and cid != ''">#{cid},</if>
+            <if test="lId != null  and lId != ''">#{lId},</if>
+            <if test="lCard != null  and lCard != ''">#{lCard},</if>
+            <if test="lType != null  and lType != ''">#{lType},</if>
+            <if test="lStock != null  and lStock != ''">#{lStock},</if>
+            <if test="lStockno != null  and lStockno != ''">#{lStockno},</if>
+            <if test="lTruck != null  and lTruck != ''">#{lTruck},</if>
+            <if test="lTruckid != null  and lTruckid != ''">#{lTruckid},</if>
+            <if test="lValue != null ">#{lValue},</if>
+            <if test="lCustype != null  and lCustype != ''">#{lCustype},</if>
+            <if test="lCusid != null  and lCusid != ''">#{lCusid},</if>
+            <if test="lCusname != null  and lCusname != ''">#{lCusname},</if>
+            <if test="lCuspy != null  and lCuspy != ''">#{lCuspy},</if>
+            <if test="lOrder != null  and lOrder != ''">#{lOrder},</if>
+            <if test="lOrderid != null  and lOrderid != ''">#{lOrderid},</if>
+            <if test="lSeal != null  and lSeal != ''">#{lSeal},</if>
+            <if test="lIsvip != null  and lIsvip != ''">#{lIsvip},</if>
+            <if test="lMan != null  and lMan != ''">#{lMan},</if>
+            <if test="lDate != null ">#{lDate},</if>
+            <if test="lPickdate != null ">#{lPickdate},</if>
+            <if test="lPickman != null  and lPickman != ''">#{lPickman},</if>
+            <if test="lPostday != null  and lPostday != ''">#{lPostday},</if>
+            <if test="lPostdate != null ">#{lPostdate},</if>
+            <if test="lPostman != null  and lPostman != ''">#{lPostman},</if>
+            <if test="lFactnum != null  and lFactnum != ''">#{lFactnum},</if>
+            <if test="lOutnum != null  and lOutnum != ''">#{lOutnum},</if>
+            <if test="lOutfact != null ">#{lOutfact},</if>
+            <if test="lStatus != null  and lStatus != ''">#{lStatus},</if>
+            <if test="lAction != null  and lAction != ''">#{lAction},</if>
+            <if test="lResult != null  and lResult != ''">#{lResult},</if>
+            <if test="lMemo != null  and lMemo != ''">#{lMemo},</if>
+            <if test="lCrm != null  and lCrm != ''">#{lCrm},</if>
+            <if test="lCrmflag != null  and lCrmflag != ''">#{lCrmflag},</if>
+            <if test="lExtinfo != null ">#{lExtinfo},</if>
+            <if test="lExtres != null ">#{lExtres},</if>
+            <if test="lDelman != null  and lDelman != ''">#{lDelman},</if>
+            <if test="lDeldate != null ">#{lDeldate},</if>
+            <if test="lCrmitem != null  and lCrmitem != ''">#{lCrmitem},</if>
+            <if test="lVkbur != null  and lVkbur != ''">#{lVkbur},</if>
+            <if test="lBezeivk != null  and lBezeivk != ''">#{lBezeivk},</if>
+            <if test="lBillbak != null  and lBillbak != ''">#{lBillbak},</if>
+            <if test="lOrderbak != null  and lOrderbak != ''">#{lOrderbak},</if>
+            <if test="lOffline != null  and lOffline != ''">#{lOffline},</if>
+            <if test="lCrmtype != null  and lCrmtype != ''">#{lCrmtype},</if>
+            <if test="lEpyflag != null  and lEpyflag != ''">#{lEpyflag},</if>
+            <if test="lEpytime != null ">#{lEpytime},</if>
+            <if test="lEpyman != null  and lEpyman != ''">#{lEpyman},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="deleteStatus != null ">#{deleteStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTmsBillInfo" parameterType="BillInfo">
+        update sys_tms_bill_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cid != null  and cid != ''">CID = #{cid},</if>
+            <if test="lId != null  and lId != ''">L_ID = #{lId},</if>
+            <if test="lCard != null  and lCard != ''">L_Card = #{lCard},</if>
+            <if test="lType != null  and lType != ''">L_Type = #{lType},</if>
+            <if test="lStock != null  and lStock != ''">L_Stock = #{lStock},</if>
+            <if test="lStockno != null  and lStockno != ''">L_StockNo = #{lStockno},</if>
+            <if test="lTruck != null  and lTruck != ''">L_Truck = #{lTruck},</if>
+            <if test="lTruckid != null  and lTruckid != ''">L_TruckID = #{lTruckid},</if>
+            <if test="lValue != null ">L_Value = #{lValue},</if>
+            <if test="lCustype != null  and lCustype != ''">L_CusType = #{lCustype},</if>
+            <if test="lCusid != null  and lCusid != ''">L_CusID = #{lCusid},</if>
+            <if test="lCusname != null  and lCusname != ''">l_cusName = #{lCusname},</if>
+            <if test="lCuspy != null  and lCuspy != ''">L_CusPY = #{lCuspy},</if>
+            <if test="lOrder != null  and lOrder != ''">L_Order = #{lOrder},</if>
+            <if test="lOrderid != null  and lOrderid != ''">L_OrderID = #{lOrderid},</if>
+            <if test="lSeal != null  and lSeal != ''">L_Seal = #{lSeal},</if>
+            <if test="lIsvip != null  and lIsvip != ''">L_IsVIP = #{lIsvip},</if>
+            <if test="lMan != null  and lMan != ''">L_Man = #{lMan},</if>
+            <if test="lDate != null ">L_Date = #{lDate},</if>
+            <if test="lPickdate != null ">L_PickDate = #{lPickdate},</if>
+            <if test="lPickman != null  and lPickman != ''">L_PickMan = #{lPickman},</if>
+            <if test="lPostday != null  and lPostday != ''">L_PostDay = #{lPostday},</if>
+            <if test="lPostdate != null ">L_PostDate = #{lPostdate},</if>
+            <if test="lPostman != null  and lPostman != ''">L_PostMan = #{lPostman},</if>
+            <if test="lFactnum != null  and lFactnum != ''">L_FactNum = #{lFactnum},</if>
+            <if test="lOutnum != null  and lOutnum != ''">L_OutNum = #{lOutnum},</if>
+            <if test="lOutfact != null ">L_OutFact = #{lOutfact},</if>
+            <if test="lStatus != null  and lStatus != ''">L_Status = #{lStatus},</if>
+            <if test="lAction != null  and lAction != ''">L_Action = #{lAction},</if>
+            <if test="lResult != null  and lResult != ''">L_Result = #{lResult},</if>
+            <if test="lMemo != null  and lMemo != ''">L_Memo = #{lMemo},</if>
+            <if test="lCrm != null  and lCrm != ''">L_CRM = #{lCrm},</if>
+            <if test="lCrmflag != null  and lCrmflag != ''">L_CRMFlag = #{lCrmflag},</if>
+            <if test="lExtinfo != null ">L_ExtInfo = #{lExtinfo},</if>
+            <if test="lExtres != null ">L_ExtRes = #{lExtres},</if>
+            <if test="lDelman != null  and lDelman != ''">L_DelMan = #{lDelman},</if>
+            <if test="lDeldate != null ">L_DelDate = #{lDeldate},</if>
+            <if test="lCrmitem != null  and lCrmitem != ''">L_CRMItem = #{lCrmitem},</if>
+            <if test="lVkbur != null  and lVkbur != ''">L_VKBUR = #{lVkbur},</if>
+            <if test="lBezeivk != null  and lBezeivk != ''">L_BEZEIVK = #{lBezeivk},</if>
+            <if test="lBillbak != null  and lBillbak != ''">L_Billbak = #{lBillbak},</if>
+            <if test="lOrderbak != null  and lOrderbak != ''">L_Orderbak = #{lOrderbak},</if>
+            <if test="lOffline != null  and lOffline != ''">L_Offline = #{lOffline},</if>
+            <if test="lCrmtype != null  and lCrmtype != ''">L_CRMType = #{lCrmtype},</if>
+            <if test="lEpyflag != null  and lEpyflag != ''">L_EPYFlag = #{lEpyflag},</if>
+            <if test="lEpytime != null ">L_EPYTime = #{lEpytime},</if>
+            <if test="lEpyman != null  and lEpyman != ''">L_EPYMan = #{lEpyman},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="deleteStatus != null ">delete_status = #{deleteStatus},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteTmsBillInfoById" parameterType="Integer">
+        delete from sys_tms_bill_info where ID = #{id}
+    </delete>
+
+    <delete id="deleteTmsBillInfoByIds" parameterType="String">
+        delete from sys_tms_bill_info where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

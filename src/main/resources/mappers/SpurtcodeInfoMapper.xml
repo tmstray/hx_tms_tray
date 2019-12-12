@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huaxin.cloud.tms.tray.dao.SpurtcodeInfoMapper">
+    <resultMap id="BaseResultMap" type="com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="meteriel_code" jdbcType="VARCHAR" property="meterielCode"/>
+        <result column="meteriel_desc" jdbcType="VARCHAR" property="meterielDesc"/>
+        <result column="factory_code" jdbcType="VARCHAR" property="factoryCode"/>
+        <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
+        <result column="current_code" jdbcType="VARCHAR" property="currentCode"/>
+        <result column="current_number" jdbcType="INTEGER" property="currentNumber"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="delete_flag" jdbcType="INTEGER" property="deleteFlag"/>
+        <result column="current_status" jdbcType="INTEGER" property="currentStatus"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, meteriel_code, meteriel_desc, factory_code, factory_name, current_code, current_number, 
+    remarks, create_by, create_time, update_by, update_time, version, delete_flag,current_status
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tms_spurtcode_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tms_spurtcode_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into tms_spurtcode_info (meteriel_code, meteriel_desc, factory_code,
+        factory_name, current_code, current_number,
+        remarks, create_by, create_time,
+        update_by, update_time, version,
+        delete_flag,current_status)
+        values (#{meterielCode,jdbcType=VARCHAR}, #{meterielDesc,jdbcType=VARCHAR}, #{factoryCode,jdbcType=VARCHAR},
+        #{factoryName,jdbcType=VARCHAR}, #{currentCode,jdbcType=VARCHAR}, #{currentNumber,jdbcType=INTEGER},
+        #{remarks,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+        #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{version,jdbcType=VARCHAR},
+        #{deleteFlag,jdbcType=INTEGER},#{currentStatus,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" parameterType="com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into tms_spurtcode_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="meterielCode != null">
+                meteriel_code,
+            </if>
+            <if test="meterielDesc != null">
+                meteriel_desc,
+            </if>
+            <if test="factoryCode != null">
+                factory_code,
+            </if>
+            <if test="factoryName != null">
+                factory_name,
+            </if>
+            <if test="currentCode != null">
+                current_code,
+            </if>
+            <if test="currentNumber != null">
+                current_number,
+            </if>
+            <if test="remarks != null">
+                remarks,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag,
+            </if>
+            <if test="currentStatus != null">
+                current_status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="meterielCode != null">
+                #{meterielCode,jdbcType=VARCHAR},
+            </if>
+            <if test="meterielDesc != null">
+                #{meterielDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="factoryCode != null">
+                #{factoryCode,jdbcType=VARCHAR},
+            </if>
+            <if test="factoryName != null">
+                #{factoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="currentCode != null">
+                #{currentCode,jdbcType=VARCHAR},
+            </if>
+            <if test="currentNumber != null">
+                #{currentNumber,jdbcType=INTEGER},
+            </if>
+            <if test="remarks != null">
+                #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null">
+                #{deleteFlag,jdbcType=INTEGER},
+            </if>
+            <if test="currentStatus != null">
+                #{currentStatus,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo">
+        update tms_spurtcode_info
+        <set>
+            <if test="meterielCode != null">
+                meteriel_code = #{meterielCode,jdbcType=VARCHAR},
+            </if>
+            <if test="meterielDesc != null">
+                meteriel_desc = #{meterielDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="factoryCode != null">
+                factory_code = #{factoryCode,jdbcType=VARCHAR},
+            </if>
+            <if test="factoryName != null">
+                factory_name = #{factoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="currentCode != null">
+                current_code = #{currentCode,jdbcType=VARCHAR},
+            </if>
+            <if test="currentNumber != null">
+                current_number = #{currentNumber,jdbcType=INTEGER},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=INTEGER},
+            </if>
+            <if test="currentStatus != null">
+                current_status = #{currentStatus,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo">
+    update tms_spurtcode_info
+    set meteriel_code = #{meterielCode,jdbcType=VARCHAR},
+      meteriel_desc = #{meterielDesc,jdbcType=VARCHAR},
+      factory_code = #{factoryCode,jdbcType=VARCHAR},
+      factory_name = #{factoryName,jdbcType=VARCHAR},
+      current_code = #{currentCode,jdbcType=VARCHAR},
+      current_number = #{currentNumber,jdbcType=INTEGER},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      version = #{version,jdbcType=VARCHAR},
+      delete_flag = #{deleteFlag,jdbcType=INTEGER},
+      current_status = #{currentStatus,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <!--更新当前喷码的喷码包数-->
+    <update id="updateCurrentNumber">
+        UPDATE tms_spurtcode_info
+        set current_number = #{currentNumber},
+        update_time = current_timestamp
+        where current_status = 2
+        and delete_flag = 0
+    </update>
+    <!--更新当前喷码状态，当前使用喷码->等待绑定喷码-->
+    <update id="updateCurrentStatus">
+        UPDATE tms_spurtcode_info
+        set current_status = 1
+        where current_status = 2
+        and delete_flag = 0
+    </update>
+    <!--逻辑删除-->
+    <update id="updateDeleteFlag">
+        UPDATE tms_spurtcode_info
+        set delete_flag = 1
+        WHERE current_status = 2
+        and delete_flag = 0
+    </update>
+    <!--修改当前喷码-->
+    <update id="updateCurrentSpurtcode">
+        update tms_spurtcode_info
+        set current_code = #{currentSpurtcode}
+        WHERE current_status = 2
+        and delete_flag = 0
+    </update>
+    <!--查询当前等待绑定的喷码信息-->
+    <select id="selectByCurrentStatus" resultMap="BaseResultMap">
+    SELECT * FROM  tms_spurtcode_info
+    WHERE current_status = 1 and delete_flag = 0
+    ORDER by create_time ASC
+    limit 1
+  </select>
+    <!--获得当前喷码信息-->
+    <select id="selectCurrentSpurtcode" resultMap="BaseResultMap">
+        select  * FROM tms_spurtcode_info WHERE current_status = 2 and delete_flag = 0
+    </select>
+    <!--根据喷码查找喷码-->
+    <select id="selectSpurtcodeByCurrentCode" resultMap="BaseResultMap">
+        SELECT * from tms_spurtcode_info
+        WHERE delete_flag = 0
+        and current_code = #{currentCode}
+    </select>
+    <!-- 通过装车道号，查询出厂编号-->
+    <select id="selectOutNum" resultType="java.util.Map">
+        select so.N_OutNum, so.N_Stock,so.N_Name,sf.F_ID,sf.F_Name
+        from S_ZTLines sz
+        left join S_OutNum so on sz.Z_StockNo = so.N_Stock
+        left join Sys_Factorys sf on so.N_Factory = sf.F_ID
+        where sz.Z_ID = #{zId}
+    </select>
+    <!-- 查询所有生产线接口-->
+    <select id="selectZtlinesList" resultType="java.util.Map">
+        select Z_ID , Z_Stock , Z_PeerWeight from  S_ZTLines
+    </select>
+<!--    查询重复喷码-->
+    <select id="selectRepetitive" resultType="java.lang.Integer">
+        select count(id) from tms_spurtcode_info
+        where current_code = #{currentSpurtcode} and current_status &lt;&gt; 2
+        and delete_flag = 0
+    </select>
+</mapper>

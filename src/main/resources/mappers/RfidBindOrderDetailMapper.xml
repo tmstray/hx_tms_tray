@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huaxin.cloud.tms.tray.dao.RfidBindOrderDetailMapper">
+    
+    <resultMap type="com.huaxin.cloud.tms.tray.entity.RfidBindOrderDetail" id="RfidBindOrderDetailResult">
+        <result property="id"    column="id"    />
+        <result property="currentCode"    column="current_code"    />
+        <result property="rfid"    column="rfid"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="pid"    column="pid"    />
+    </resultMap>
+
+    <sql id="selectRfidBindOrderDetailVo">
+        select id, current_code, rfid, create_time, delete_flag, pid from tms_rfid_bind_order_detail
+    </sql>
+
+    <select id="selectRfidBindOrderDetailList" parameterType="RfidBindOrderDetail" resultMap="RfidBindOrderDetailResult">
+        <include refid="selectRfidBindOrderDetailVo"/>
+        <where>  
+            <if test="currentCode != null  and currentCode != ''"> and current_code = #{currentCode}</if>
+            <if test="rfid != null  and rfid != ''"> and rfid = #{rfid}</if>
+            <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
+            <if test="pid != null "> and pid = #{pid}</if>
+        </where>
+    </select>
+    
+    <select id="selectRfidBindOrderDetailById" parameterType="Integer" resultMap="RfidBindOrderDetailResult">
+        <include refid="selectRfidBindOrderDetailVo"/>
+        where id = #{id}
+    </select>
+    
+    <insert id="batchRfidBindOrderDetai">
+		insert into tms_rfid_bind_order_detail(current_code, rfid, pid) values
+		<foreach item="item" index="index" collection="list" separator=",">
+			(#{item.currentCode},#{item.rfid},#{item.pid})
+		</foreach>
+	</insert>
+        
+    <insert id="insertRfidBindOrderDetail" parameterType="RfidBindOrderDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into tms_rfid_bind_order_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="currentCode != null  and currentCode != ''">current_code,</if>
+            <if test="rfid != null  and rfid != ''">rfid,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="deleteFlag != null ">delete_flag,</if>
+            <if test="pid != null ">pid,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="currentCode != null  and currentCode != ''">#{currentCode},</if>
+            <if test="rfid != null  and rfid != ''">#{rfid},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="deleteFlag != null ">#{deleteFlag},</if>
+            <if test="pid != null ">#{pid},</if>
+         </trim>
+    </insert>
+    
+    <delete id="unBind" parameterType="RfidBindOrderDetailDTO">
+        UPDATE tms_rfid_bind_order_detail SET delete_flag = 1 WHERE pid IN ( SELECT id FROM tms_rfid_bind_order WHERE order_no = #{orderNo} ) 
+		AND rfid = #{rfid}
+    </delete>
+
+    <update id="updateRfidBindOrderDetail" parameterType="RfidBindOrderDetail">
+        update sys_tms_rfid_bind_order_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="currentCode != null  and currentCode != ''">current_code = #{currentCode},</if>
+            <if test="rfid != null  and rfid != ''">rfid = #{rfid},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="deleteFlag != null ">delete_flag = #{deleteFlag},</if>
+            <if test="pid != null ">pid = #{pid},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRfidBindOrderDetailById" parameterType="String">
+        update tms_rfid_bind_order_detail set delete_flag = 1 where rfid = #{rfid} and current_code =#{currentCode}
+    </delete>
+
+    <delete id="deleteRfidBindOrderDetailByIds" parameterType="String">
+        delete from sys_tms_rfid_bind_order_detail where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateRfidAndCurrentCode">
+        UPDATE tms_rfid_bind_order_detail
+        SET current_code = #{currentCode}
+		AND rfid = #{rfid} and current_code=#{oldCode}
+    </update>
+    
+</mapper>

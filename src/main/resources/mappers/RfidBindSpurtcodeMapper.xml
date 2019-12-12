@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huaxin.cloud.tms.tray.dao.RfidBindSpurtcodeMapper">
+  <resultMap id="BaseResultMap" type="com.huaxin.cloud.tms.tray.entity.RfidBindSpurtcode">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="meteriel_code" jdbcType="VARCHAR" property="meterielCode" />
+    <result column="meteriel_desc" jdbcType="VARCHAR" property="meterielDesc" />
+    <result column="factory_code" jdbcType="VARCHAR" property="factoryCode" />
+    <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
+    <result column="current_code" jdbcType="VARCHAR" property="currentCode" />
+    <result column="installed_quantity" jdbcType="INTEGER" property="installedQuantity" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="rfid" jdbcType="VARCHAR" property="rfid" />
+    <result column="is_having" jdbcType="INTEGER" property="isHaving" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="delete_flag" jdbcType="INTEGER" property="deleteFlag" />
+  </resultMap>
+  <resultMap id="BaseResultMap1" type="com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo">
+    <id column="id" jdbcType="INTEGER" property="id"/>
+    <result column="meteriel_code" jdbcType="VARCHAR" property="meterielCode"/>
+    <result column="meteriel_desc" jdbcType="VARCHAR" property="meterielDesc"/>
+    <result column="factory_code" jdbcType="VARCHAR" property="factoryCode"/>
+    <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
+    <result column="current_code" jdbcType="VARCHAR" property="currentCode"/>
+    <result column="current_number" jdbcType="INTEGER" property="currentNumber"/>
+    <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+    <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="delete_flag" jdbcType="INTEGER" property="deleteFlag"/>
+    <result column="current_status" jdbcType="INTEGER" property="currentStatus"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, meteriel_code, meteriel_desc, factory_code, factory_name, current_code, installed_quantity, 
+    unit, rfid, is_having, remarks, create_by, create_time, update_by, update_time, version, 
+    delete_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tms_rfid_bind_spurtcode
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tms_rfid_bind_spurtcode
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.huaxin.cloud.tms.tray.entity.RfidBindSpurtcode">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tms_rfid_bind_spurtcode (meteriel_code, meteriel_desc, factory_code, 
+      factory_name, current_code, installed_quantity, 
+      unit, rfid, is_having, 
+      remarks, create_by, create_time, 
+      update_by, update_time, version, 
+      delete_flag)
+    values (#{meterielCode,jdbcType=VARCHAR}, #{meterielDesc,jdbcType=VARCHAR}, #{factoryCode,jdbcType=VARCHAR}, 
+      #{factoryName,jdbcType=VARCHAR}, #{currentCode,jdbcType=VARCHAR}, #{installedQuantity,jdbcType=INTEGER}, 
+      #{unit,jdbcType=VARCHAR}, #{rfid,jdbcType=VARCHAR}, #{isHaving,jdbcType=INTEGER}, 
+      #{remarks,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{version,jdbcType=VARCHAR}, 
+      #{deleteFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huaxin.cloud.tms.tray.entity.RfidBindSpurtcode">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tms_rfid_bind_spurtcode
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="meterielCode != null">
+        meteriel_code,
+      </if>
+      <if test="meterielDesc != null">
+        meteriel_desc,
+      </if>
+      <if test="factoryCode != null">
+        factory_code,
+      </if>
+      <if test="factoryName != null">
+        factory_name,
+      </if>
+      <if test="currentCode != null">
+        current_code,
+      </if>
+      <if test="installedQuantity != null">
+        installed_quantity,
+      </if>
+      <if test="unit != null">
+        unit,
+      </if>
+      <if test="rfid != null">
+        rfid,
+      </if>
+      <if test="isHaving != null">
+        is_having,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="meterielCode != null">
+        #{meterielCode,jdbcType=VARCHAR},
+      </if>
+      <if test="meterielDesc != null">
+        #{meterielDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryCode != null">
+        #{factoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryName != null">
+        #{factoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="currentCode != null">
+        #{currentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="installedQuantity != null">
+        #{installedQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="unit != null">
+        #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="rfid != null">
+        #{rfid,jdbcType=VARCHAR},
+      </if>
+      <if test="isHaving != null">
+        #{isHaving,jdbcType=INTEGER},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null">
+        #{deleteFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huaxin.cloud.tms.tray.entity.RfidBindSpurtcode">
+    update tms_rfid_bind_spurtcode
+    <set>
+      <if test="meterielCode != null">
+        meteriel_code = #{meterielCode,jdbcType=VARCHAR},
+      </if>
+      <if test="meterielDesc != null">
+        meteriel_desc = #{meterielDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryCode != null">
+        factory_code = #{factoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryName != null">
+        factory_name = #{factoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="currentCode != null">
+        current_code = #{currentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="installedQuantity != null">
+        installed_quantity = #{installedQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="unit != null">
+        unit = #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="rfid != null">
+        rfid = #{rfid,jdbcType=VARCHAR},
+      </if>
+      <if test="isHaving != null">
+        is_having = #{isHaving,jdbcType=INTEGER},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag = #{deleteFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huaxin.cloud.tms.tray.entity.RfidBindSpurtcode">
+    update tms_rfid_bind_spurtcode
+    set meteriel_code = #{meterielCode,jdbcType=VARCHAR},
+      meteriel_desc = #{meterielDesc,jdbcType=VARCHAR},
+      factory_code = #{factoryCode,jdbcType=VARCHAR},
+      factory_name = #{factoryName,jdbcType=VARCHAR},
+      current_code = #{currentCode,jdbcType=VARCHAR},
+      installed_quantity = #{installedQuantity,jdbcType=INTEGER},
+      unit = #{unit,jdbcType=VARCHAR},
+      rfid = #{rfid,jdbcType=VARCHAR},
+      is_having = #{isHaving,jdbcType=INTEGER},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      version = #{version,jdbcType=VARCHAR},
+      delete_flag = #{deleteFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--解除绑定关系-->
+    <update id="updateDeleteFlag">
+      UPDATE tms_rfid_bind_spurtcode
+      set is_having = 1 , update_time = CURRENT_TIMESTAMP
+      WHERE rfid = #{rfid}
+      and delete_flag = 0
+      and is_having = 0
+    </update>
+    <!--查询绑定清单-->
+  <select id="selectRfidBindSpurtcodeList" resultType="map">
+    select tr.* ,tt.rfid_status from tms_rfid_bind_spurtcode tr
+    left join tms_tray_info tt on tt.rfid = tr.rfid
+    WHERE  tr.current_code is not null
+    and tr.create_time &gt; #{startTime}
+    and tr.create_time &lt; #{endTime}
+    and tr.delete_flag =0
+    and tt.delete_flag = 0
+    order by tr.create_time desc
+  </select>
+  <!--根据喷码和rfid查询是否已有绑定生效的绑定关系-->
+  <select id="selectByCurrentCodeAndRfid" resultMap="BaseResultMap">
+  SELECT * FROM tms_rfid_bind_spurtcode
+  WHERE rfid = #{rfid}
+  and delete_flag = 0
+  and is_having = 0
+  </select>
+  <!--根据托盘rfid查询当前绑定生效的喷码-->
+  <select id="selectCurrentCodeByRfid" resultType="java.lang.String">
+    select current_code FROM tms_rfid_bind_spurtcode
+    WHERE rfid = #{rfid}
+    and delete_flag = 0
+    and is_having = 0
+  </select>
+<!--  查询今天已生产的总数-->
+  <select id="selectTotalTotal" resultType="java.lang.Integer">
+    select count(id) from tms_rfid_bind_spurtcode
+    where to_days(create_time)=to_days(current_timestamp)
+    and current_code is not null
+  </select>
+<!--  查询当天最新一条绑定关系-->
+  <select id="selectNewest" resultMap="BaseResultMap">
+    select * from tms_rfid_bind_spurtcode
+    where to_days(create_time)=to_days(current_timestamp)
+    and current_code is not null
+    and delete_flag = 0
+    and is_having = 0
+    order by create_time desc
+    limit 1
+  </select>
+<!--  根据rfid查询喷码信息-->
+  <select id="selectSpurtCodeByRfid" resultMap="BaseResultMap1">
+    select ts.* from tms_spurtcode_info ts
+    left join tms_rfid_bind_spurtcode tr on tr.current_code = ts.current_code
+    WHERE tr.rfid = #{rfid}
+    and tr.delete_flag = 0
+    and tr.is_having = 0
+    and ts.delete_flag = 0
+  </select>
+<!--  根据rfid查询绑定关系数量-->
+  <select id="selectByRfid" resultType="java.lang.Integer">
+    select count(rfid) from tms_rfid_bind_spurtcode
+    where rfid = #{rfid}
+    and delete_flag = 0
+    and is_having = 0
+  </select>
+  <!--  更新托盘码绑定表的 是否使用状态-->
+  <update id="updateIsHavaing">
+      UPDATE tms_rfid_bind_spurtcode
+      set is_having = 1 , update_time = current_timestamp
+      WHERE rfid = #{rfid}
+      and delete_flag = 0 and is_having=0
+    </update>
+<!--  修改绑定关系状态为删除作废-->
+  <update id="update">
+    UPDATE tms_rfid_bind_spurtcode
+      set delete_flag = 1 , update_time = current_timestamp,remarks=#{remark}
+      WHERE rfid = #{rfid}
+      and delete_flag = 0 and is_having=0
+  </update>
+<!--  更改绑定关系-->
+  <update id="updateBind">
+    update tms_spurtcode_info ts1
+	left JOIN tms_rfid_bind_spurtcode tr on ts1.current_code = tr.current_code
+	set ts1.current_status= 1 ,tr.current_code= #{currentCode}
+	WHERE tr.rfid = #{rfid}
+	and ts1.delete_flag = 0
+	and tr.is_having = 0
+	and tr.delete_flag = 0
+  </update>
+
+</mapper>

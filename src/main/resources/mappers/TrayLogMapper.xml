@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huaxin.cloud.tms.tray.dao.TrayLogMapper">
+    <resultMap id="BaseResultMap" type="com.huaxin.cloud.tms.tray.entity.TrayLog">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="business_type" jdbcType="VARCHAR" property="businessType"/>
+        <result column="factory_code" jdbcType="VARCHAR" property="factoryCode"/>
+        <result column="method" jdbcType="VARCHAR" property="method"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="use_time" jdbcType="DECIMAL" property="useTime"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="delete_flag" jdbcType="INTEGER" property="deleteFlag"/>
+        <result column="operation" jdbcType="LONGVARCHAR" property="operation"/>
+        <result column="params" jdbcType="LONGVARCHAR" property="params"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, business_type, factory_code, method, ip, use_time, remarks, create_by, create_time, 
+    delete_flag,operation,params
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tms_tray_log
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tms_tray_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertTrayLog" parameterType="TrayLog">
+		insert into tms_tray_log(title, business_type, method, request_method, operator_type, oper_url, ip, oper_param, json_result, oper_location, status, error_msg, factory_code, remarks, create_by, create_time)
+        values (#{title}, #{businessType}, #{method}, #{requestMethod}, #{operatorType}, #{operUrl}, #{ip}, #{operParam}, #{jsonResult}, #{operLocation}, #{status}, #{errorMsg}, #{factoryCode}, #{remarks}, #{createBy}, sysdate())
+  </insert>
+   
+    <insert id="insertSelective" parameterType="com.huaxin.cloud.tms.tray.entity.TrayLog">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into tms_tray_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="businessType != null">
+                business_type,
+            </if>
+            <if test="factoryCode != null">
+                factory_code,
+            </if>
+            <if test="method != null">
+                method,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
+            <if test="useTime != null">
+                use_time,
+            </if>
+            <if test="remarks != null">
+                remarks,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag,
+            </if>
+            <if test="operation != null">
+                operation,
+            </if>
+            <if test="params != null">
+                params,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="businessType != null">
+                #{businessType,jdbcType=VARCHAR},
+            </if>
+            <if test="factoryCode != null">
+                #{factoryCode,jdbcType=VARCHAR},
+            </if>
+            <if test="method != null">
+                #{method,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null">
+                #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="useTime != null">
+                #{useTime,jdbcType=DECIMAL},
+            </if>
+            <if test="remarks != null">
+                #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteFlag != null">
+                #{deleteFlag,jdbcType=INTEGER},
+            </if>
+            <if test="operation != null">
+                #{operation,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="params != null">
+                #{params,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.huaxin.cloud.tms.tray.entity.TrayLog">
+        update tms_tray_log
+        <set>
+            <if test="businessType != null">
+                business_type = #{businessType,jdbcType=VARCHAR},
+            </if>
+            <if test="factoryCode != null">
+                factory_code = #{factoryCode,jdbcType=VARCHAR},
+            </if>
+            <if test="method != null">
+                method = #{method,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null">
+                ip = #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="useTime != null">
+                use_time = #{useTime,jdbcType=DECIMAL},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=INTEGER},
+            </if>
+            <if test="operation != null">
+                operation = #{operation,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="params != null">
+                params = #{params,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.huaxin.cloud.tms.tray.entity.TrayLog">
+    update tms_tray_log
+    set business_type = #{businessType,jdbcType=VARCHAR},
+      factory_code = #{factoryCode,jdbcType=VARCHAR},
+      method = #{method,jdbcType=VARCHAR},
+      ip = #{ip,jdbcType=VARCHAR},
+      use_time = #{useTime,jdbcType=DECIMAL},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      delete_flag = #{deleteFlag,jdbcType=INTEGER},
+       operation = #{operation,jdbcType=LONGVARCHAR},
+       params = #{params,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

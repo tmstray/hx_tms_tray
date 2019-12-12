@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huaxin.cloud.tms.tray.dao.TrayInfoMapper">
+  <resultMap id="TaryInfoMap" type="com.huaxin.cloud.tms.tray.dto.Response.ResTrayInfoDTO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="factory_code" jdbcType="VARCHAR" property="factoryCode" />
+    <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
+    <result column="rfid" jdbcType="VARCHAR" property="rfid" />
+    <result column="rfid_type" jdbcType="INTEGER" property="rfidType" />
+    <result column="rfid_status" jdbcType="INTEGER" property="rfidStatus" />
+    <result column="init_time" jdbcType="TIMESTAMP" property="initTime" />
+    <result column="binding_time" jdbcType="TIMESTAMP" property="bindingTime" />
+    <result column="leave_time" jdbcType="TIMESTAMP" property="leaveTime" />
+    <result column="return_time" jdbcType="TIMESTAMP" property="returnTime" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="delete_flag" jdbcType="INTEGER" property="deleteFlag" />
+    <result column="rfid_type_name" jdbcType="VARCHAR" property="rfidTypeName" />
+    <result column="rfid_status_name" jdbcType="VARCHAR" property="rfidStatusName" />
+    <result column="current_code" jdbcType="VARCHAR" property="currentCode" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="rfid_count" jdbcType="INTEGER" property="rfidCount" />
+    <result column="rfid_health" jdbcType="INTEGER" property="rfidHealth" />
+    <result column="rfid_health_name" jdbcType="VARCHAR" property="rfidHealthName" />
+    <result column="meteriel_code" jdbcType="VARCHAR" property="meterielCode" />
+    <result column="meteriel_desc" jdbcType="VARCHAR" property="meterielDesc" />
+
+  </resultMap>
+  <sql id="Base_Column_List">
+      t.id, t.factory_code, t.factory_name,
+      t.rfid,
+      t.rfid_type,
+      case when t.rfid_type =1 then '木质'
+             when t.rfid_type =2 then '塑胶'
+		else '其它' end rfid_type_Name,
+      t.rfid_status,
+      case   when t.rfid_status =1 then '满盘'
+             when t.rfid_status =2 then '空托'
+			 when t.rfid_status =3 then '在途(中转库)'
+			 when t.rfid_status =4 then '异地(客户)'
+			 when t.rfid_status =5 then '已装车'
+	  else '其它' end rfid_status_name,
+	  t.rfid_health,
+	  case   when t.rfid_health =0 then '良好'
+             when t.rfid_health =1 then '报损'
+			 when t.rfid_health =2 then '报废'
+			 when t.rfid_health =3 then '冻结'
+      else '其它' end rfid_health_name,
+
+      t.init_time, t.binding_time,
+      t.remarks, t.create_by, t.create_time,
+      t.update_by, t.update_time, t.version,
+      t.delete_flag,s.current_code,o.order_no,
+      s.meteriel_code,s.meteriel_desc
+  </sql>
+  <select id="selectTrayInfoList" resultMap="TaryInfoMap">
+    select 
+        <include refid="Base_Column_List" />
+    from tms_tray_info t
+    left join tms_rfid_bind_spurtcode s on s.rfid = t.rfid and s.factory_code =t.factory_code and s.is_having =0 and s.delete_flag =0
+    left join tms_rfid_bind_order_detail d on d.rfid = t.rfid and d.current_code = s.current_code and d.delete_flag =0
+    left join tms_rfid_bind_order o on o.id =d.pid and o.delete_flag=0
+    where t.delete_flag=0
+    <if test="factoryCode != null and factoryCode !='' ">
+      and t.factory_code = #{factoryCode,jdbcType=VARCHAR}
+    </if>
+    <if test="rfidType != null and rfidType !='' ">
+      and t.rfid_type = #{rfidType,jdbcType=INTEGER}
+    </if>
+    <if test="rfidStatus != null and rfidStatus !='' ">
+      and rfid_status = #{rfidStatus,jdbcType=INTEGER}
+    </if>
+    order by t.rfid
+  </select>
+  <select id="selectListGroupbyStatus" resultMap="TaryInfoMap">
+    select
+        factory_code,
+        factory_name,
+        rfid_type,
+        case when rfid_type =1 then '木质'
+             when rfid_type =2 then '塑胶'
+		else '其它' end rfid_type_Name,
+        rfid_status,
+          case   when rfid_status =1 then '满盘'
+          when rfid_status =2 then '空托'
+          when rfid_status =3 then '在途(中转库)'
+          when rfid_status =4 then '异地(客户)'
+          when rfid_status =5 then '已装车'
+          else '其它' end rfid_status_name,
+        count(rfid) rfid_count
+    from tms_tray_info
+    where delete_flag =0
+    <if test="factoryCode != null and factoryCode !='' ">
+      and factoryCode = #{factoryCode,jdbcType=VARCHAR}
+    </if>
+    <if test="rfid != null and rfid !='' ">
+      and rfid = #{rfid,jdbcType=VARCHAR}
+    </if>
+    group by
+        factory_code,
+        factory_name,
+        rfid_type,
+        rfid_status
+    order by factory_code,rfid_status
+  </select>
+
+
+  <delete id="deleteByPrimaryKey">
+    update tms_tray_info
+            set delete_flag =1,
+            update_by = #{updateBy,jdbcType=VARCHAR},
+            update_time =current_timestamp
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+
+  <insert id="insertBatch" parameterType="com.huaxin.cloud.tms.tray.entity.TrayInfo">
+    insert into
+        tms_tray_info(factory_code,factory_name,rfid,rfid_type,rfid_status,create_by,version)
+    values
+    <foreach collection="records" item="record" separator=",">
+      (#{record.factoryCode},#{record.factoryName},#{record.rfid},#{record.rfidType},#{record.rfidStatus},#{record.createBy},#{record.version})
+    </foreach>
+  </insert>
+
+
+  <insert id="insertSelective" parameterType="com.huaxin.cloud.tms.tray.entity.TrayInfo">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tms_tray_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="factoryCode != null and factoryCode !='' ">factory_code, </if>
+      <if test="factoryName != null and factoryName !='' ">factory_name, </if>
+      <if test="rfid != null and rfid !=''">rfid,</if>
+      <if test="rfidType != null and rfidType !='' ">rfid_type, </if>
+      <if test="rfidStatus != null and rfidStatus !='' ">rfid_status, </if>
+      <if test="initTime != null">init_time, </if>
+      <if test="bindingTime != null">binding_time,</if>
+      <if test="leaveTime != null">leave_time,</if>
+      <if test="returnTime != null">return_time,</if>
+      <if test="remarks != null and remarks !='' ">remarks,</if>
+      <if test="createBy != null and createBy !='' ">create_by, </if>
+      <if test="createTime != null">create_time,</if>
+      <if test="updateBy != null and updateBy !='' "> update_by, </if>
+      <if test="updateTime != null">update_time,</if>
+      <if test="version != null and version !='' ">version,</if>
+      <if test="deleteFlag != null and deleteFlag !='' ">delete_flag,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="factoryCode != null and factoryCode !='' "> #{factoryCode,jdbcType=VARCHAR},</if>
+      <if test="factoryName != null and factoryName !='' "> #{factoryName,jdbcType=VARCHAR},</if>
+      <if test="rfid != null and rfid !='' ">#{rfid,jdbcType=VARCHAR}, </if>
+      <if test="rfidType != null and rfidType !='' "> #{rfidType,jdbcType=INTEGER},</if>
+      <if test="rfidStatus != null and rfidStatus !='' ">#{rfidStatus,jdbcType=INTEGER},</if>
+      <if test="initTime != null"> #{initTime,jdbcType=TIMESTAMP},</if>
+      <if test="bindingTime != null"> #{bindingTime,jdbcType=TIMESTAMP},</if>
+      <if test="leaveTime != null"> #{leaveTime,jdbcType=TIMESTAMP},</if>
+      <if test="returnTime != null"> #{returnTime,jdbcType=TIMESTAMP},</if>
+      <if test="remarks != null and remarks !='' "> #{remarks,jdbcType=VARCHAR},</if>
+      <if test="createBy != null and createBy !='' ">#{createBy,jdbcType=VARCHAR},</if>
+      <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+      <if test="updateBy != null and updateBy !='' ">#{updateBy,jdbcType=VARCHAR},</if>
+      <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
+      <if test="version != null and version !='' ">#{version,jdbcType=VARCHAR},</if>
+      <if test="deleteFlag != null and deleteFlag !='' ">#{deleteFlag,jdbcType=INTEGER}</if>
+    </trim>
+  </insert>
+
+  <update id="updateByRfid">
+    update tms_tray_info
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="rfidStatus != null  and rfidStatus != '' ">rfid_status = #{rfidStatus},</if>
+      <if test="updateBy != null and updateBy != '' ">update_by = #{updateBy},</if>
+      <if test="initTime != null ">init_time = #{initTime},</if>
+       binding_time = #{bindingTime},
+      <if test="leaveTime != null ">leave_time = #{leaveTime},</if>
+      <if test="returnTime != null ">return_time = #{returnTime},</if>
+      <if test="updateTime != null ">update_time = #{updateTime},</if>
+      <if test="remarks != null and remarks != '' ">  remarks= #{remarks},</if>
+      <if test="version != null and version != '' ">version= #{version},</if>
+      <if test="rfidHealth!= null and rfidHealth != '' ">rfid_health= #{rfidHealth}</if>
+    </trim>
+    where delete_flag =0
+      <if test="factoryCode != null and factoryCode !='' ">
+          and factory_code=#{factoryCode,jdbcType=VARCHAR}
+      </if>
+         and rfid =#{rfid,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateStatusByWayBillNo">
+    update tms_tray_info
+      <trim prefix="SET" suffixOverrides=",">
+        <if test="rfidStatus != null  and rfidStatus != '' ">rfid_status = #{rfidStatus},</if>
+        <if test="updateBy != null and updateBy != '' ">update_by = #{updateBy},</if>
+          leave_time =current_timestamp,
+          update_time =current_timestamp
+      </trim>
+    where rfid in (
+        select d.rfid from tms_rfid_bind_order t
+            inner join tms_rfid_bind_order_detail d on t.id=d.pid
+            where t.order_no=#{orderNo,jdbcType=VARCHAR}
+              <if test="factoryCode != null and factoryCode !='' ">
+                  and t.factory_code=#{factoryCode,jdbcType=VARCHAR}
+              </if>
+            and d.delete_flag =0
+          )
+      and delete_flag =0
+  </update>
+    <!--修改托盘状态-->
+    <update id="updateRfidStatus">
+        UPDATE  tms_tray_info
+        set rfid_status = #{rfidStatus}, binding_time = current_timestamp
+        where rfid = #{rfid} and delete_flag =0
+    </update>
+    <select id="getTrayInfoByRfid" resultMap="TaryInfoMap">
+        select * from tms_tray_info
+         where delete_flag =0
+        <if test="factoryCode != null and factoryCode !='' ">
+            and factory_code=#{factoryCode}
+        </if>
+         and rfid =#{rfid}
+  </select>
+    <!--根据rfid和空托状态查询，是否有该空托盘-->
+    <select id="selectTrayInfoByRfidAndRfidStatus" resultType="com.huaxin.cloud.tms.tray.entity.TrayInfo">
+        select * from tms_tray_info
+        WHERE delete_flag = 0
+        and rfid_status = 2
+        and rfid = #{rfid}
+    </select>
+</mapper>

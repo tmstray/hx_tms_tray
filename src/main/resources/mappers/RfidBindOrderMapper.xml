@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huaxin.cloud.tms.tray.dao.RfidBindOrderMapper">
+  <resultMap id="BaseResultMap" type="com.huaxin.cloud.tms.tray.entity.RfidBindOrder">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="meteriel_code" jdbcType="VARCHAR" property="meterielCode" />
+    <result column="meteriel_desc" jdbcType="VARCHAR" property="meterielDesc" />
+    <result column="factory_code" jdbcType="VARCHAR" property="factoryCode" />
+    <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
+    <result column="waybill_no" jdbcType="VARCHAR" property="waybillNo" />
+    <result column="license_plate" jdbcType="VARCHAR" property="licensePlate" />
+    <result column="driver_name" jdbcType="VARCHAR" property="driverName" />
+    <result column="driver_phone" jdbcType="VARCHAR" property="driverPhone" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress" />
+    <result column="goods_number" jdbcType="DECIMAL" property="goodsNumber" />
+    <result column="shipment_status" jdbcType="INTEGER" property="shipmentStatus" />
+    <result column="binding_time" jdbcType="TIMESTAMP" property="bindingTime" />
+    <result column="entering_time" jdbcType="TIMESTAMP" property="enteringTime" />
+    <result column="leave_time" jdbcType="TIMESTAMP" property="leaveTime" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="delete_flag" jdbcType="INTEGER" property="deleteFlag" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <collection  property="rfidBindOrderDetails"   javaType="java.util.List"        resultMap="RfidBindOrderDetailResult" />
+  </resultMap>
+  
+  <resultMap type="com.huaxin.cloud.tms.tray.entity.RfidBindOrderDetail" id="RfidBindOrderDetailResult">
+        <result property="id"    column="id"    />
+        <result property="currentCode"    column="current_code"    />
+        <result property="rfid"    column="rfid"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="pid"    column="pid"    />
+  </resultMap>
+    
+  <sql id="Base_Column_List">
+    select 
+	    id, meteriel_code, meteriel_desc, factory_code, factory_name, 
+	    waybill_no, license_plate, driver_name, driver_phone, order_no, product_name, 
+	    delivery_address, goods_number, shipment_status, binding_time, entering_time, 
+	    leave_time, remarks, create_by, create_time, update_by, update_time, delete_flag, version 
+    from 
+    	tms_rfid_bind_order
+  </sql>
+  
+  <sql id="RfidBindOrderVo">
+    select 
+    	ro.id, ro.meteriel_code, ro.meteriel_desc, ro.factory_code, ro.factory_name, ro.waybill_no, 
+    	ro.license_plate, ro.driver_name, ro.driver_phone, ro.order_no, ro.product_name, ro.delivery_address, 
+    	ro.goods_number, ro.shipment_status, ro.binding_time, ro.entering_time, ro.leave_time, ro.remarks, ro.create_by, 
+    	ro.create_time, ro.update_by, ro.update_time, ro.delete_flag, ro.version, 
+    	rd.current_code, rd.rfid, rd.create_time, rd.delete_flag, rd.pid 
+	 from 
+	    tms_rfid_bind_order ro left join tms_rfid_bind_order_detail rd on ro.id = rd.pid
+  </sql>
+  
+  
+  
+  <select id="selectRfidBindOrderList" parameterType="RfidBindOrder" resultMap="BaseResultMap">
+        <include refid="RfidBindOrderVo"/>
+        <where>  
+            <if test="meterielCode != null  and meterielCode != ''"> and ro.meteriel_code = #{meterielCode}</if>
+            <if test="meterielDesc != null  and meterielDesc != ''"> and ro.meteriel_desc = #{meterielDesc}</if>
+            <if test="factoryCode != null  and factoryCode != ''"> and ro.factory_code = #{factoryCode}</if>
+            <if test="factoryName != null  and factoryName != ''"> and ro.factory_name like concat('%', #{factoryName}, '%')</if>
+            <if test="waybillNo != null  and waybillNo != ''"> and ro.waybill_no = #{waybillNo}</if>
+            <if test="licensePlate != null  and licensePlate != ''"> and ro.license_plate = #{licensePlate}</if>
+            <if test="driverName != null  and driverName != ''"> and ro.driver_name like concat('%', #{driverName}, '%')</if>
+            <if test="driverPhone != null  and driverPhone != ''"> and ro.driver_phone = #{driverPhone}</if>
+            <if test="orderNo != null  and orderNo != ''"> and ro.order_no = #{orderNo}</if>
+            <if test="productName != null  and productName != ''"> and ro.product_name like concat('%', #{productName}, '%')</if>
+            <if test="deliveryAddress != null  and deliveryAddress != ''"> and ro.delivery_address = #{deliveryAddress}</if>
+            <if test="goodsNumber != null "> and ro.goods_number = #{goodsNumber}</if>
+            <if test="shipmentStatus != null "> and ro.shipment_status = #{shipmentStatus}</if>
+            <if test="bindingTime != null "> and ro.binding_time = #{bindingTime}</if>
+            <if test="enteringTime != null "> and ro.entering_time = #{enteringTime}</if>
+            <if test="leaveTime != null "> and ro.leave_time = #{leaveTime}</if>
+            <if test="remarks != null  and remarks != ''"> and ro.remarks = #{remarks}</if>
+            <if test="deleteFlag != null "> and ro.delete_flag = #{deleteFlag}</if>
+            <if test="version != null  and version != ''"> and ro.version = #{version}</if>
+        </where>
+        and ro.delete_flag = 0 and rd.delete_flag = 0
+    </select>
+  
+  <select id="selectRfidBindOrderById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <include refid="RfidBindOrderVo"/>
+        where ro.id = #{id} and ro.delete_flag = 0 and rd.delete_flag = 0
+  </select>
+  
+  
+   <select id="selectOrderList" parameterType="RfidBindOrder" resultMap="BaseResultMap">
+        <include refid="Base_Column_List"/>
+        where delete_flag = 0
+  </select>
+  
+  
+  <select id="selectRfidBindOrderByOrderNo" parameterType="String" resultMap="BaseResultMap">
+        <include refid="Base_Column_List"/>
+        where order_no = #{orderNo} and delete_flag = 0
+  </select>
+  
+  <insert id="insertRfidBindOrder" parameterType="RfidBindOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into tms_rfid_bind_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="meterielCode != null  and meterielCode != ''">meteriel_code,</if>
+            <if test="meterielDesc != null  and meterielDesc != ''">meteriel_desc,</if>
+            <if test="factoryCode != null  and factoryCode != ''">factory_code,</if>
+            <if test="factoryName != null  and factoryName != ''">factory_name,</if>
+            <if test="waybillNo != null  and waybillNo != ''">waybill_no,</if>
+            <if test="licensePlate != null  and licensePlate != ''">license_plate,</if>
+            <if test="driverName != null  and driverName != ''">driver_name,</if>
+            <if test="driverPhone != null  and driverPhone != ''">driver_phone,</if>
+            <if test="orderNo != null  and orderNo != ''">order_no,</if>
+            <if test="productName != null  and productName != ''">product_name,</if>
+            <if test="deliveryAddress != null  and deliveryAddress != ''">delivery_address,</if>
+            <if test="goodsNumber != null ">goods_number,</if>
+            <if test="shipmentStatus != null ">shipment_status,</if>
+            <if test="bindingTime != null ">binding_time,</if>
+            <if test="enteringTime != null ">entering_time,</if>
+            <if test="leaveTime != null ">leave_time,</if>
+            <if test="remarks != null  and remarks != ''">remarks,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="deleteFlag != null ">delete_flag,</if>
+            <if test="version != null  and version != ''">version,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="meterielCode != null  and meterielCode != ''">#{meterielCode},</if>
+            <if test="meterielDesc != null  and meterielDesc != ''">#{meterielDesc},</if>
+            <if test="factoryCode != null  and factoryCode != ''">#{factoryCode},</if>
+            <if test="factoryName != null  and factoryName != ''">#{factoryName},</if>
+            <if test="waybillNo != null  and waybillNo != ''">#{waybillNo},</if>
+            <if test="licensePlate != null  and licensePlate != ''">#{licensePlate},</if>
+            <if test="driverName != null  and driverName != ''">#{driverName},</if>
+            <if test="driverPhone != null  and driverPhone != ''">#{driverPhone},</if>
+            <if test="orderNo != null  and orderNo != ''">#{orderNo},</if>
+            <if test="productName != null  and productName != ''">#{productName},</if>
+            <if test="deliveryAddress != null  and deliveryAddress != ''">#{deliveryAddress},</if>
+            <if test="goodsNumber != null ">#{goodsNumber},</if>
+            <if test="shipmentStatus != null ">#{shipmentStatus},</if>
+            <if test="bindingTime != null ">#{bindingTime},</if>
+            <if test="enteringTime != null ">#{enteringTime},</if>
+            <if test="leaveTime != null ">#{leaveTime},</if>
+            <if test="remarks != null  and remarks != ''">#{remarks},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="deleteFlag != null ">#{deleteFlag},</if>
+            <if test="version != null  and version != ''">#{version},</if>
+         </trim>
+    </insert>
+    
+    <update id="updateShipmentStatus" parameterType="String">
+ 		update tms_rfid_bind_order set shipment_status = '1' where order_no = #{orderNo}
+	</update>
+	
+	<update id="updateEnteringTime" parameterType="String">
+ 		update tms_rfid_bind_order set entering_time = sysdate() where order_no = #{orderNo}
+	</update>
+	
+	<update id="updateLeaveTime" parameterType="String">
+ 		update tms_rfid_bind_order set leave_time = sysdate() where order_no = #{orderNo}
+	</update>
+	
+    <update id="updateRfidBindOrder" parameterType="RfidBindOrder">
+        update tms_rfid_bind_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="meterielCode != null  and meterielCode != ''">meteriel_code = #{meterielCode},</if>
+            <if test="meterielDesc != null  and meterielDesc != ''">meteriel_desc = #{meterielDesc},</if>
+            <if test="factoryCode != null  and factoryCode != ''">factory_code = #{factoryCode},</if>
+            <if test="factoryName != null  and factoryName != ''">factory_name = #{factoryName},</if>
+            <if test="waybillNo != null  and waybillNo != ''">waybill_no = #{waybillNo},</if>
+            <if test="licensePlate != null  and licensePlate != ''">license_plate = #{licensePlate},</if>
+            <if test="driverName != null  and driverName != ''">driver_name = #{driverName},</if>
+            <if test="driverPhone != null  and driverPhone != ''">driver_phone = #{driverPhone},</if>
+            <if test="orderNo != null  and orderNo != ''">order_no = #{orderNo},</if>
+            <if test="productName != null  and productName != ''">product_name = #{productName},</if>
+            <if test="deliveryAddress != null  and deliveryAddress != ''">delivery_address = #{deliveryAddress},</if>
+            <if test="goodsNumber != null ">goods_number = #{goodsNumber},</if>
+            <if test="shipmentStatus != null ">shipment_status = #{shipmentStatus},</if>
+            <if test="bindingTime != null ">binding_time = #{bindingTime},</if>
+            <if test="enteringTime != null ">entering_time = #{enteringTime},</if>
+            <if test="leaveTime != null ">leave_time = #{leaveTime},</if>
+            <if test="remarks != null  and remarks != ''">remarks = #{remarks},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="deleteFlag != null ">delete_flag = #{deleteFlag},</if>
+            <if test="version != null  and version != ''">version = #{version},</if>
+        </trim>
+        where id = #{id}
+    </update>
+  
+  	<delete id="deleteRfidBindOrderById" parameterType="java.lang.Integer">
+        update tms_rfid_bind_order set delete_flag = 1 where id = #{id} 
+    </delete>
+    
+    <!-- 第一种情况 	oldCurrentCode != newCurrentCode && oldOrderNo ==  newOrderNo -->
+    <update id="updateCurrentCode" parameterType="String">
+ 		UPDATE tms_rfid_bind_order o,
+		tms_rfid_bind_order_detail d 
+		SET d.current_code = #{newCurrentCode} where o.id=d.pid and d.delete_flag = 0 and o.order_no = #{newOrderNo}
+	</update>
+	
+	<!-- 第二种情况 	oldCurrentCode = newCurrentCode && oldOrderNo !=  newOrderNo -->
+	<update id="updateOrderNo" parameterType="String">
+ 		update tms_rfid_bind_order set order_no = #{newOrderNo} where order_no = #{oldOrderNo}
+	</update>
+	
+	<!-- 第三种情况 	oldCurrentCode ！= newCurrentCode && oldOrderNo !=  newOrderNo -->
+	<update id="updateOrderNoAndCurrentCode" parameterType="String">
+ 		UPDATE tms_rfid_bind_order o,
+		tms_rfid_bind_order_detail d 
+		SET d.current_code = #{newCurrentCode},o.order_no = #{newOrderNo} where o.id=d.pid and d.delete_flag = 0 and o.order_no = #{oldOrderNo}
+	</update>
+    
+</mapper>

@@ -17,8 +17,16 @@ public interface TrayInfoService
      * @param trayInfo 托盘基础信息管理
      * @return 托盘基础信息管理集合
      */
-    public List<ResTrayInfoDTO> selectTrayInfoList(TrayInfo trayInfo);
+    public List<ResTrayInfoDTO> selectTrayInfoList(ReqTrayInfoDTO trayInfo);
 
+
+    /**
+     * 满托查询
+     *
+     * @param trayInfo 满托查询
+     * @return 满托查询
+     */
+    public List<ResTrayInfoDTO> selectTrayInfoFull(ReqTrayInfoDTO trayInfo);
 
     /**
      * 根据托盘状态 返回对应的托盘数量：

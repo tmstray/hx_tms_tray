@@ -253,7 +253,7 @@
         WHERE delete_flag = 0
         and current_code = #{currentCode}
     </select>
-    <!-- 通过装车道号，查询出厂编号-->
+    <!-- 通过装车道号，查询出厂编号工厂信息-->
     <select id="selectOutNum" resultType="java.util.Map">
         select so.N_OutNum, so.N_Stock,so.N_Name,sf.F_ID,sf.F_Name
         from S_ZTLines sz
@@ -264,6 +264,7 @@
     <!-- 查询所有生产线接口-->
     <select id="selectZtlinesList" resultType="java.util.Map">
         select Z_ID , Z_Stock , Z_PeerWeight from  S_ZTLines
+        where Z_ID like 'ZT%'
     </select>
 <!--    查询重复喷码-->
     <select id="selectRepetitive" resultType="java.lang.Integer">

@@ -1,5 +1,6 @@
 package com.huaxin.cloud.tms.tray.common.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ public class HuaXinConfig
 
     /** 版权年份 */
     private String copyrightYear;
+    
     
     /** 上传路径 */
     private static String profile;
@@ -59,7 +61,8 @@ public class HuaXinConfig
 		return profile;
 	}
 
-	public static void setProfile(String profile) {
+    @Value("${huaxin.profile}")
+	public  void setProfile(String profile) {
 		HuaXinConfig.profile = profile;
 	}
 
@@ -78,5 +81,5 @@ public class HuaXinConfig
     {
         return getProfile() + "/upload";
     }
-   
+    
 }

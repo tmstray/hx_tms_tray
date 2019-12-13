@@ -52,7 +52,7 @@ public class TrayInfoController extends BaseController
     public TableDataInfo list(@RequestBody JSONObject jsonObject)
     {
         try {
-            TrayInfo trayInfo = new TrayInfo();
+            ReqTrayInfoDTO trayInfo =new ReqTrayInfoDTO();
             Integer pageNum = jsonObject.getInteger("pageNum");
             Integer pageSise = jsonObject.getInteger("pageSize");
             trayInfo.setRfidStatus(jsonObject.getInteger("rfidStatus") == 0 ? null : jsonObject.getInteger("rfidStatus"));
@@ -232,10 +232,22 @@ public class TrayInfoController extends BaseController
     public TableDataInfo fullTrayList(@RequestBody JSONObject jsonObject)
     {
         try {
-            TrayInfo trayInfo = new TrayInfo();
+            ReqTrayInfoDTO trayInfo =new ReqTrayInfoDTO();
             Integer pageNum = jsonObject.getInteger("pageNum");
             Integer pageSise = jsonObject.getInteger("pageSize");
+//            可以通过托盘ID、喷码、绑定DL交货单和入库时间进行查询
+            String rfid =jsonObject.getString("rfid");
+            String currentCode=jsonObject.getString("currentCode");
+            String orderNo =jsonObject.getString("orderNo");
+            String startTime =jsonObject.getString("startTime");
+            String endTime =jsonObject.getString("endTime");
+
+            trayInfo.setRfid(rfid);
+            trayInfo.setCurrentCode(currentCode);
+            trayInfo.setOrderNo(orderNo);
             trayInfo.setRfidStatus(Constants.RFID_STATUS_FULL);
+            trayInfo.setStartTime(startTime);
+            trayInfo.setEndTime(endTime);
             PageHelper.startPage(pageNum, pageSise);
             List<ResTrayInfoDTO> list = trayInfoService.selectTrayInfoList(trayInfo);
             PageInfo p = new PageInfo<>(list);
@@ -251,12 +263,20 @@ public class TrayInfoController extends BaseController
     public TableDataInfo emptyTrayList(@RequestBody JSONObject jsonObject)
     {
         try {
-            TrayInfo trayInfo = new TrayInfo();
+            ReqTrayInfoDTO trayInfo =new ReqTrayInfoDTO();
             Integer pageNum = jsonObject.getInteger("pageNum");
             Integer pageSise = jsonObject.getInteger("pageSize");
+            String rfid =jsonObject.getString("rfid");
+            Integer rfidHealth =jsonObject.getInteger("rfidHealth");
+            String startTime =jsonObject.getString("startTime");
+            String endTime =jsonObject.getString("endTime");
             trayInfo.setRfidStatus(Constants.RFID_STATUS_EMPTY);
+            trayInfo.setRfid(rfid);
+            trayInfo.setRfidHealth(rfidHealth);
+            trayInfo.setStartTime(startTime);
+            trayInfo.setEndTime(endTime);
             PageHelper.startPage(pageNum, pageSise);
-            List<ResTrayInfoDTO> list = trayInfoService.selectTrayInfoList(trayInfo);
+            List<ResTrayInfoDTO> list = trayInfoService.selectTrayInfoFull(trayInfo);
             PageInfo p = new PageInfo<>(list);
             return getDataTable(p.getList());
         }catch (Exception e){
@@ -266,7 +286,6 @@ public class TrayInfoController extends BaseController
         }
     }
 
-    @ResponseBody
     @GetMapping("/hello")
     public String hello(String cc){
         System.out.println("下联是："+ DateUtils.getTime() +": 宝塔镇河妖");
@@ -276,7 +295,6 @@ public class TrayInfoController extends BaseController
     @Log(title = "托盘导入管理", businessType = BusinessType.IMPORT)
     @PostMapping("/importData")
     @ApiOperation(value = "托盘导入管理")
-    @ResponseBody
     public ResultInfo importData(MultipartFile file) throws Exception
     {
         ExcelUtil<TrayInfo> util = new ExcelUtil<TrayInfo>(TrayInfo.class);
@@ -292,6 +310,14 @@ public class TrayInfoController extends BaseController
         // 获取导入的数据执行数据库操作：
         String message = trayInfoService.importTrayInfo(trayInfoList);
         return ResultInfo.success(message);
+    }
+    
+    @GetMapping("/importTemplate")
+    @ApiOperation(value = "托盘导入模板管理")
+    public ResultInfo importTemplate()
+    {
+        ExcelUtil<TrayInfo> util = new ExcelUtil<TrayInfo>(TrayInfo.class);
+        return util.importTemplateExcel("托盘数据");
     }
 }
 

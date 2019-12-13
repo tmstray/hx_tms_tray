@@ -59,7 +59,7 @@ public interface SpurtcodeInfoService
     String updateRule(String prefixRule, Map<String, Object> map);
 
     /**
-     * 查询出厂编号
+     * 通过装车道号，查询出厂编号工厂信息
      * @return
      */
     Map<String ,Object> selectOutNum(String zId);

@@ -124,44 +124,6 @@ public class SpurtcodeInfoServiceImpl implements SpurtcodeInfoService {
         spurtcodeInfoMapper.insertSelective(spurtcodeInfo);
     }
 
-//    /**
-//     * 假设喷码喷一次码，调用一次接口
-//     */
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public int spurtCode() {
-//        SpurtcodeInfo spurtcodeInfo = spurtcodeInfoMapper.selectCurrentSpurtcode();
-//        if (spurtcodeInfo == null) {
-//            beginGenerateSpurtcode();
-//        } else {
-//            //获取流水号
-//            int serialNumber = Integer.valueOf(stringRedisTemplate.boundValueOps("serialNumber").get(0, -1));
-//            //获取当前包数
-//            int currentNumber = serialNumber % 40;
-//            //2.更新数据库
-//            if (currentNumber == 0) {
-//                spurtcodeInfoMapper.updateCurrentNumber(40);
-//                log.info("当前包数为40，重新生成喷码");
-//                //修改当前喷码状态，当前使用喷码->等待绑定喷码
-//                spurtcodeInfoMapper.updateCurrentStatus();
-//                //插入新的喷码数据
-////                beginGenerateSpurtcode();
-//            } else {
-//                spurtcodeInfoMapper.updateCurrentNumber(currentNumber);
-//            }
-//        }
-//        //数据库操作成功时自增流水号,保证mySql和redis一致性
-//        try {
-//            stringRedisTemplate.opsForValue().increment("serialNumber").intValue();
-//        } catch (Exception e) {
-//            log.error("redis操作流水号失败", e);
-//            //redis操作失败时回滚数据库操作
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//            return -1;
-//        }
-//        return 1;
-//    }
-
     /**
      * 查询所有生产线接口
      */
@@ -247,7 +209,7 @@ public class SpurtcodeInfoServiceImpl implements SpurtcodeInfoService {
     }
 
     /**
-     * 获取出厂编号
+     *  通过装车道号，查询出厂编号工厂信息
      *
      * @return
      */

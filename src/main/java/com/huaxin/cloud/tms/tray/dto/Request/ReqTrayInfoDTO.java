@@ -76,6 +76,32 @@ public class ReqTrayInfoDTO extends BaseEntity {
     /**第二次绑定（交货单号）*/
     private String orderNo;
 
+    /** 开始时间 */
+    @ApiModelProperty(value = "开始时间 ")
+    @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
+    private String startTime;
+    /** 截止时间 */
+    @ApiModelProperty(value = "截止时间 ")
+    @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
+    private String endTime;
+
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
     public String getMeterielCode() {
         return meterielCode;
     }

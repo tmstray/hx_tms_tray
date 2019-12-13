@@ -64,11 +64,24 @@ public class TrayInfoServiceImpl implements TrayInfoService
      * @return 托盘基础信息管理
      */
     @Override
-    public List<ResTrayInfoDTO> selectTrayInfoList(TrayInfo trayInfo)
+    public List<ResTrayInfoDTO> selectTrayInfoList(ReqTrayInfoDTO trayInfo)
     {
         ReqTrayInfoDTO infoDTO= new ReqTrayInfoDTO();
         BeanUtils.copyProperties(trayInfo,infoDTO);
         return trayInfoMapper.selectTrayInfoList(infoDTO);
+    }
+
+    /**
+     * 满托数据查询
+     * @param trayInfo 满托查询
+     * @return
+     */
+    @Override
+    public List<ResTrayInfoDTO> selectTrayInfoFull(ReqTrayInfoDTO trayInfo)
+    {
+        ReqTrayInfoDTO infoDTO= new ReqTrayInfoDTO();
+        BeanUtils.copyProperties(trayInfo,infoDTO);
+        return trayInfoMapper.selectTrayInfoFull(infoDTO);
     }
 
     @Override

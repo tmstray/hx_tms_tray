@@ -19,6 +19,9 @@ public interface TrayInfoMapper {
 
     List<ResTrayInfoDTO> selectTrayInfoList(ReqTrayInfoDTO trayInfo);
 
+    List<ResTrayInfoDTO> selectTrayInfoFull(ReqTrayInfoDTO trayInfo);
+
+
     List<ResTrayInfoDTO> selectListGroupbyStatus(ReqTrayInfoDTO trayInfo);
 
     int updateStatusByWayBillNo(@Param("factoryCode") String factoryCode,

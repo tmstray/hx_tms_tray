@@ -40,7 +40,6 @@ public class BillInfoController extends BaseController
      * 查询交货单列表
      */
     @PostMapping("/list")
-    @ResponseBody
     public TableDataInfo list(BillInfo billInfo)
     {
         startPage();

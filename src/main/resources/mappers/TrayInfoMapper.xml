@@ -65,17 +65,66 @@
     left join tms_rfid_bind_order_detail d on d.rfid = t.rfid and d.current_code = s.current_code and d.delete_flag =0
     left join tms_rfid_bind_order o on o.id =d.pid and o.delete_flag=0
     where t.delete_flag=0
-    <if test="factoryCode != null and factoryCode !='' ">
-      and t.factory_code = #{factoryCode,jdbcType=VARCHAR}
+    <if test="rfid != null and rfid !='' ">
+      and t.rfid = #{rfid,jdbcType=VARCHAR}
     </if>
-    <if test="rfidType != null and rfidType !='' ">
+    <if test="rfidType != null  ">
       and t.rfid_type = #{rfidType,jdbcType=INTEGER}
     </if>
-    <if test="rfidStatus != null and rfidStatus !='' ">
-      and rfid_status = #{rfidStatus,jdbcType=INTEGER}
+    <if test="rfidStatus != null  ">
+      and t.rfid_status = #{rfidStatus,jdbcType=INTEGER}
     </if>
-    order by t.rfid
+    <if test="rfidHealth != null ">
+      and t.rfid_health = #{rfidHealth,jdbcType=INTEGER}
+    </if>
+    <if test="startTime != null and startTime != '' ">
+         and date_format(t.init_time,'%Y-%m-%d') &gt;= #{startTime,jdbcType=VARCHAR}
+    </if>
+    <if test="endTime != null and endTime!='' ">
+         and date_format(t.init_time,'%Y-%m-%d') &lt;= #{endTime,jdbcType=VARCHAR}
+    </if>
+    <if test="orderNo != null and orderNo !='' ">
+        and o.order_no = #{orderNo,jdbcType=VARCHAR}
+    </if>
+    <if test="currentCode != null and currentCode !='' ">
+        and s.current_code = #{currentCode,jdbcType=VARCHAR}
+    </if>
+    order by t.init_time desc
   </select>
+    <select id="selectTrayInfoFull" resultMap="TaryInfoMap">
+        select
+        <include refid="Base_Column_List" />
+        from tms_tray_info t
+        left join tms_rfid_bind_spurtcode s on s.rfid = t.rfid and s.factory_code =t.factory_code and s.is_having =0 and s.delete_flag =0
+        left join tms_rfid_bind_order_detail d on d.rfid = t.rfid and d.current_code = s.current_code and d.delete_flag =0
+        left join tms_rfid_bind_order o on o.id =d.pid and o.delete_flag=0
+        where t.delete_flag=0
+        <if test="rfid != null and rfid !='' ">
+            and t.rfid = #{rfid,jdbcType=VARCHAR}
+        </if>
+        <if test="rfidType != null  ">
+            and t.rfid_type = #{rfidType,jdbcType=INTEGER}
+        </if>
+        <if test="rfidStatus != null ">
+            and t.rfid_status = #{rfidStatus,jdbcType=INTEGER}
+        </if>
+        <if test="rfidHealth != null ">
+            and t.rfid_health = #{rfidHealth,jdbcType=INTEGER}
+        </if>
+        <if test="startTime != null and startTime != '' ">
+            and date_format(t.init_time,'%Y-%m-%d') &gt;= #{startTime,jdbcType=VARCHAR}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and date_format(t.init_time,'%Y-%m-%d') &lt;= #{endTime,jdbcType=VARCHAR}
+        </if>
+        <if test="orderNo != null and orderNo !='' ">
+            and o.order_no = #{orderNo,jdbcType=VARCHAR}
+        </if>
+        <if test="currentCode != null and currentCode !='' ">
+            and s.current_code = #{currentCode,jdbcType=VARCHAR}
+        </if>
+        order by t.init_time desc
+    </select>
   <select id="selectListGroupbyStatus" resultMap="TaryInfoMap">
     select
         factory_code,
@@ -94,11 +143,14 @@
         count(rfid) rfid_count
     from tms_tray_info
     where delete_flag =0
-    <if test="factoryCode != null and factoryCode !='' ">
-      and factoryCode = #{factoryCode,jdbcType=VARCHAR}
-    </if>
     <if test="rfid != null and rfid !='' ">
-      and rfid = #{rfid,jdbcType=VARCHAR}
+        and rfid = #{rfid,jdbcType=VARCHAR}
+    </if>
+    <if test="rfidType != null  ">
+        and rfid_type = #{rfidType,jdbcType=INTEGER}
+    </if>
+    <if test="rfidStatus != null ">
+        and rfid_status = #{rfidStatus,jdbcType=INTEGER}
     </if>
     group by
         factory_code,

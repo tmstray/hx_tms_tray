@@ -96,7 +96,7 @@ public interface SpurtcodeInfoMapper {
     SpurtcodeInfo selectSpurtcodeByCurrentCode(@Param("currentCode") String currentCode);
 
     /**
-     * 通过装车道号，查询出厂编号
+     *  通过装车道号，查询出厂编号工厂信息
      * @param zId 装车id
      * @return
      */

@@ -151,6 +151,10 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 			//第五种情况  新增操作
 			//先插入订单表
 			if (StringUtils.isNotEmpty(orderNo)) {
+				RfidBindOrder rd = selectRfidBindOrderByOrderNo(orderNo);
+		    	if(StringUtils.isNotNull(rd)) {
+		    		throw new BusinessException("该订单已存在，请检查数据.");
+		    	}
 				RfidBindOrder rfidBindOrderC = new RfidBindOrder();
 				BeanUtils.copyProperties(rfidBindOrderAndDetailDTO, rfidBindOrderC);
 				result=rfidBindOrderMapper.insertRfidBindOrder(rfidBindOrderC);
@@ -282,9 +286,9 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
         	successMsg.insert(0, "操作成功");
         }
 		//根据提货单更新托盘状态
-//		String orderNo = rfidBindOrderDetailDTOList.get(0).getOrderNo();
-//		String factoryCode = rfidBindOrderDetailDTOList.get(0).getFactoryCode();
-//		trayInfoService.updateStatusByWayBillNo(factoryCode, orderNo, null, null);
+		String orderNo = rfidBindOrderDetailDTOList.get(0).getOrderNo();
+		String factoryCode = rfidBindOrderDetailDTOList.get(0).getFactoryCode();
+		trayInfoService.updateStatusByWayBillNo(factoryCode, orderNo, Constants.RFID_STATUS_LOADEDCAR, null);
 		return successMsg.toString();
     }
     

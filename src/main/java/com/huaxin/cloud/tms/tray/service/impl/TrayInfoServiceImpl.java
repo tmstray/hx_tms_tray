@@ -2,7 +2,6 @@ package com.huaxin.cloud.tms.tray.service.impl;
 
 import com.huaxin.cloud.tms.tray.common.constant.Constants;
 import com.huaxin.cloud.tms.tray.common.exception.BusinessException;
-import com.huaxin.cloud.tms.tray.common.exception.CustomException;
 import com.huaxin.cloud.tms.tray.common.utils.DateUtils;
 import com.huaxin.cloud.tms.tray.common.utils.StringUtils;
 import com.huaxin.cloud.tms.tray.dao.RfidBindOrderDetailMapper;
@@ -26,6 +25,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -119,7 +119,8 @@ public class TrayInfoServiceImpl implements TrayInfoService
                return t;
            }else {
                logger.info("空状态托盘不能重复入库");
-               throw new CustomException("空状态托盘不能重复入库");
+//               throw new CustomException("空状态托盘不能重复入库");
+               throw new BusinessException("空托盘重复初始化");
            }
         }else {
             trayInfo.setCreateTime(DateUtils.getNowDate());
@@ -200,6 +201,20 @@ public class TrayInfoServiceImpl implements TrayInfoService
             rfidBindOrderDetails.add(detail);
             dto.setRfidBindOrderDetails(rfidBindOrderDetails);
             rfidBindOrderService.SecondBind(dto);
+
+        }
+        // 修改绑定关系时：需要处理托盘状态为 装车
+        if(StringUtils.isNotEmpty(orderNo) || StringUtils.isNotEmpty(oldOrderNo)) {
+            TrayInfo trayInfoVo = new TrayInfo();
+            trayInfoVo.setRfid(rfid);
+            trayInfoVo.setUpdateBy("addOrderNo");
+            trayInfoVo.setUpdateTime(new Date());
+            trayInfoVo.setRfidStatus(Constants.RFID_STATUS_LOADEDCAR);// 已装车
+            trayInfoVo.setBindingTime(reqTrayInfo.getBindingTime());
+            if(StringUtils.isEmpty(orderNo)){
+                trayInfoVo.setRfidStatus(Constants.RFID_STATUS_FULL);//满拖
+            }
+            result=trayInfoMapper.updateByRfid(trayInfoVo);
         }
         return result;
     }
@@ -276,10 +291,12 @@ public class TrayInfoServiceImpl implements TrayInfoService
         }
         int successNum = 0;
         int failureNum = 0;
+        int sum=0;
         StringBuilder successMsg = new StringBuilder();
         StringBuilder failureMsg = new StringBuilder();
         for (TrayInfo trayInfo : trayInfoList)
         {
+            sum++;
             try
             {
                     trayInfo.setFactoryCode(factoryCode);
@@ -289,17 +306,19 @@ public class TrayInfoServiceImpl implements TrayInfoService
             catch (Exception e)
             {
                 failureNum++;
-                String msg = "<br/>" + failureNum + " 导入失败：";
+                String msg = "<br/>" + failureNum + " 导入失败："+e.getMessage();
                 logger.error(msg, e);
             }
         }
-        if (failureNum > 0)
+        if (failureNum > 0 && successNum>0)
         {
-            failureMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + " 条数据格式不正确。");
+            failureMsg.insert(0, "提示：共导入："+sum+"条记录，其中(重复初始化)失败：" + failureNum + ",成功:" + successNum + " 条。");
             throw new BusinessException(failureMsg.toString());
         }
-        else
+        else if(failureNum > 0)
         {
+            failureMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + " 条数据格式不正确。");
+        }else{
             successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条。");
         }
         return successMsg.toString();

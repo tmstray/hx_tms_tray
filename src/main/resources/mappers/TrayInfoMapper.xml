@@ -38,7 +38,7 @@
              when t.rfid_type =2 then '塑胶'
 		else '其它' end rfid_type_Name,
       t.rfid_status,
-      case   when t.rfid_status =1 then '满盘'
+      case   when t.rfid_status =1 then '满托'
              when t.rfid_status =2 then '空托'
 			 when t.rfid_status =3 then '在途(中转库)'
 			 when t.rfid_status =4 then '异地(客户)'
@@ -106,7 +106,7 @@
             and t.rfid_type = #{rfidType,jdbcType=INTEGER}
         </if>
         <if test="rfidStatus != null ">
-            and t.rfid_status = #{rfidStatus,jdbcType=INTEGER}
+            and t.rfid_status !=2
         </if>
         <if test="rfidHealth != null ">
             and t.rfid_health = #{rfidHealth,jdbcType=INTEGER}
@@ -134,7 +134,7 @@
              when rfid_type =2 then '塑胶'
 		else '其它' end rfid_type_Name,
         rfid_status,
-          case   when rfid_status =1 then '满盘'
+          case   when rfid_status =1 then '满托'
           when rfid_status =2 then '空托'
           when rfid_status =3 then '在途(中转库)'
           when rfid_status =4 then '异地(客户)'
@@ -233,9 +233,9 @@
       <if test="leaveTime != null ">leave_time = #{leaveTime},</if>
       <if test="returnTime != null ">return_time = #{returnTime},</if>
       <if test="updateTime != null ">update_time = #{updateTime},</if>
-      <if test="remarks != null and remarks != '' ">  remarks= #{remarks},</if>
+      <if test="remarks != null and remarks != '' ">remarks= CONCAT(IFNULL(remarks,''), #{remarks}),</if>
       <if test="version != null and version != '' ">version= #{version},</if>
-      <if test="rfidHealth!= null and rfidHealth != '' ">rfid_health= #{rfidHealth}</if>
+      <if test="rfidHealth!= null ">rfid_health= #{rfidHealth}</if>
     </trim>
     where delete_flag =0
       <if test="factoryCode != null and factoryCode !='' ">
@@ -277,6 +277,10 @@
         </if>
          and rfid =#{rfid}
   </select>
+
+
+
+
     <!--根据rfid和空托状态查询，是否有该空托盘-->
     <select id="selectTrayInfoByRfidAndRfidStatus" resultType="com.huaxin.cloud.tms.tray.entity.TrayInfo">
         select * from tms_tray_info

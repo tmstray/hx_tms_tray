@@ -1,5 +1,19 @@
 package com.huaxin.cloud.tms.tray.controller;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -17,15 +31,9 @@ import com.huaxin.cloud.tms.tray.dto.Request.ReqTrayInfoDTO;
 import com.huaxin.cloud.tms.tray.dto.Response.ResTrayInfoDTO;
 import com.huaxin.cloud.tms.tray.entity.TrayInfo;
 import com.huaxin.cloud.tms.tray.service.TrayInfoService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 /**
  * 托盘基础信息管理Controller
@@ -249,7 +257,7 @@ public class TrayInfoController extends BaseController
             trayInfo.setStartTime(startTime);
             trayInfo.setEndTime(endTime);
             PageHelper.startPage(pageNum, pageSise);
-            List<ResTrayInfoDTO> list = trayInfoService.selectTrayInfoList(trayInfo);
+            List<ResTrayInfoDTO> list = trayInfoService.selectTrayInfoFull(trayInfo);
             PageInfo p = new PageInfo<>(list);
             return getDataTable(p.getList());
         }catch (Exception e){
@@ -276,7 +284,7 @@ public class TrayInfoController extends BaseController
             trayInfo.setStartTime(startTime);
             trayInfo.setEndTime(endTime);
             PageHelper.startPage(pageNum, pageSise);
-            List<ResTrayInfoDTO> list = trayInfoService.selectTrayInfoFull(trayInfo);
+            List<ResTrayInfoDTO> list = trayInfoService.selectTrayInfoList(trayInfo);
             PageInfo p = new PageInfo<>(list);
             return getDataTable(p.getList());
         }catch (Exception e){
@@ -317,7 +325,7 @@ public class TrayInfoController extends BaseController
     public ResultInfo importTemplate()
     {
         ExcelUtil<TrayInfo> util = new ExcelUtil<TrayInfo>(TrayInfo.class);
-        return util.importTemplateExcel("托盘数据");
+        return util.importTemplateExcel("托盘初始化导入模板");
     }
 }
 

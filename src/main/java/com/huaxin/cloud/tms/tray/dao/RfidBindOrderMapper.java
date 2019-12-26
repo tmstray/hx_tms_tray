@@ -1,9 +1,7 @@
 package com.huaxin.cloud.tms.tray.dao;
 
 import java.util.List;
-
 import com.huaxin.cloud.tms.tray.entity.RfidBindOrder;
-
 public interface RfidBindOrderMapper {
 	
 	/**

@@ -4,7 +4,6 @@ import com.huaxin.cloud.tms.tray.common.constant.Constants;
 import com.huaxin.cloud.tms.tray.common.exception.BusinessException;
 import com.huaxin.cloud.tms.tray.common.utils.DateUtils;
 import com.huaxin.cloud.tms.tray.common.utils.StringUtils;
-import com.huaxin.cloud.tms.tray.dao.RfidBindOrderDetailMapper;
 import com.huaxin.cloud.tms.tray.dao.RfidBindSpurtcodeMapper;
 import com.huaxin.cloud.tms.tray.dao.TrayInfoMapper;
 import com.huaxin.cloud.tms.tray.dto.Request.ReqTrayInfoDTO;
@@ -50,9 +49,6 @@ public class TrayInfoServiceImpl implements TrayInfoService
     @Autowired
     private RfidBindOrderService rfidBindOrderService;
 
-    @Autowired
-    private RfidBindOrderDetailMapper orderDetailMapper;
-
     @Value("${spurtcode.factory-code}")
     private String factoryCode;
     @Value("${spurtcode.factory-name}")
@@ -66,9 +62,7 @@ public class TrayInfoServiceImpl implements TrayInfoService
     @Override
     public List<ResTrayInfoDTO> selectTrayInfoList(ReqTrayInfoDTO trayInfo)
     {
-        ReqTrayInfoDTO infoDTO= new ReqTrayInfoDTO();
-        BeanUtils.copyProperties(trayInfo,infoDTO);
-        return trayInfoMapper.selectTrayInfoList(infoDTO);
+        return trayInfoMapper.selectTrayInfoList(trayInfo);
     }
 
     /**
@@ -79,9 +73,7 @@ public class TrayInfoServiceImpl implements TrayInfoService
     @Override
     public List<ResTrayInfoDTO> selectTrayInfoFull(ReqTrayInfoDTO trayInfo)
     {
-        ReqTrayInfoDTO infoDTO= new ReqTrayInfoDTO();
-        BeanUtils.copyProperties(trayInfo,infoDTO);
-        return trayInfoMapper.selectTrayInfoFull(infoDTO);
+        return trayInfoMapper.selectTrayInfoFull(trayInfo);
     }
 
     @Override
@@ -273,6 +265,8 @@ public class TrayInfoServiceImpl implements TrayInfoService
         trayInfo.setRfidHealth(reqTrayInfo.getRfidHealth()); // 修改托盘健状态  报废或报损
         trayInfo.setUpdateTime(DateUtils.getNowDate());
         trayInfo.setRemarks(reqTrayInfo.getRemarks());
+        trayInfo.setDamagedReason(reqTrayInfo.getDamagedReason());
+        trayInfo.setScrappedReason(reqTrayInfo.getScrappedReason());
         trayInfo.setUpdateBy("scrapOrLoss");
         return trayInfoMapper.updateByRfid(trayInfo);
     }
@@ -291,9 +285,9 @@ public class TrayInfoServiceImpl implements TrayInfoService
         }
         int successNum = 0;
         int failureNum = 0;
+        String message="";
         int sum=0;
         StringBuilder successMsg = new StringBuilder();
-        StringBuilder failureMsg = new StringBuilder();
         for (TrayInfo trayInfo : trayInfoList)
         {
             sum++;
@@ -308,18 +302,20 @@ public class TrayInfoServiceImpl implements TrayInfoService
                 failureNum++;
                 String msg = "<br/>" + failureNum + " 导入失败："+e.getMessage();
                 logger.error(msg, e);
+                message=e.getMessage();
             }
         }
         if (failureNum > 0 && successNum>0)
         {
-            failureMsg.insert(0, "提示：共导入："+sum+"条记录，其中(重复初始化)失败：" + failureNum + ",成功:" + successNum + " 条。");
-            throw new BusinessException(failureMsg.toString());
+            successMsg.insert(0, "提示：共导入："+sum+"条记录，其中(重复初始化)失败：" + failureNum + "条;   成功:" + successNum + " 条!");
+            throw new BusinessException(successMsg.toString());
         }
         else if(failureNum > 0)
         {
-            failureMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + " 条数据格式不正确。");
+            message= StringUtils.isNotEmpty(message)?message :"格式错误";
+            successMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + "条,"+message +"!");
         }else{
-            successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条。");
+            successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条!");
         }
         return successMsg.toString();
     }

@@ -3,6 +3,8 @@ package com.huaxin.cloud.tms.tray.dao;
 
 import java.util.List;
 
+import com.huaxin.cloud.tms.tray.common.annotation.DataSource;
+import com.huaxin.cloud.tms.tray.common.enums.DataSourceType;
 import com.huaxin.cloud.tms.tray.entity.BillInfo;
 
 /**
@@ -25,6 +27,7 @@ public interface BillInfoMapper
      * @param lCard 磁卡号
      * @return 交货单
      */
+    @DataSource(value = DataSourceType.SLAVE)
     public String selectBillInfoByLCard(String lCard);
 
     /**

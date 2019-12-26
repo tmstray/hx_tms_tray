@@ -1,17 +1,24 @@
 package com.huaxin.cloud.tms.tray.controller;
 
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.huaxin.cloud.tms.tray.common.controller.BaseController;
 import com.huaxin.cloud.tms.tray.common.page.TableDataInfo;
 import com.huaxin.cloud.tms.tray.common.result.ResultInfo;
 import com.huaxin.cloud.tms.tray.entity.BillInfo;
 import com.huaxin.cloud.tms.tray.service.BillInfoService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 交货单Controller

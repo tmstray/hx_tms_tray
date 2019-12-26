@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.huaxin.cloud.tms.tray.entity.RfidBindSpurtcode;
-
 
 /**
  * RFID绑定喷码信息Service接口

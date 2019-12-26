@@ -11,9 +11,10 @@ import java.lang.annotation.Target;
 import com.huaxin.cloud.tms.tray.common.enums.DataSourceType;
 
 /**
- * 自定义多数据源切换注解
- *
- * @author wangxiao
+ * 
+ * @Description: 自定义多数据源切换注解
+ * @author Administrator
+ * @date: 2019年12月26日下午2:10:09
  */
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

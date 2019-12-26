@@ -7,25 +7,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
 import com.huaxin.cloud.tms.tray.common.annotation.DataSource;
 import com.huaxin.cloud.tms.tray.common.constant.Constants;
 import com.huaxin.cloud.tms.tray.common.constant.HttpStatus;
 import com.huaxin.cloud.tms.tray.common.enums.DataSourceType;
 import com.huaxin.cloud.tms.tray.common.exception.BusinessException;
 import com.huaxin.cloud.tms.tray.common.exception.CustomException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import com.huaxin.cloud.tms.tray.dao.SpurtcodeInfoMapper;
 import com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo;
 import com.huaxin.cloud.tms.tray.service.SpurtcodeInfoService;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * 喷码信息Service业务层处理

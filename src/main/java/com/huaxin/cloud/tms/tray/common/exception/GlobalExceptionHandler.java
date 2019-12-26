@@ -2,12 +2,11 @@ package com.huaxin.cloud.tms.tray.common.exception;
 
 import java.util.List;
 import java.util.Set;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 
-import com.huaxin.cloud.tms.tray.common.constant.HttpStatus;
-import com.huaxin.cloud.tms.tray.common.utils.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -16,6 +15,8 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.huaxin.cloud.tms.tray.common.constant.HttpStatus;
 import com.huaxin.cloud.tms.tray.common.result.ResultInfo;
 import com.huaxin.cloud.tms.tray.common.utils.StringPool;
 import com.huaxin.cloud.tms.tray.common.utils.StringUtils;

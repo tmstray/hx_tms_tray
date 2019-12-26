@@ -17,12 +17,11 @@ import com.huaxin.cloud.tms.tray.common.utils.DateUtils;
 import com.huaxin.cloud.tms.tray.common.utils.text.Convert;
 
 /**
-* 功能描述: 反射工具类. 提供调用getter/setter方法, 访问私有变量, 调用私有方法, 获取泛型类型Class, 被AOP过的真实类等工具函数.
-* @param: 
-* @return: 
-* @auther: Administrator
-* @date: 2019/12/5 17:34
-*/
+ * 
+ * @Description: 功能描述: 反射工具类. 提供调用getter/setter方法, 访问私有变量, 调用私有方法, 获取泛型类型Class, 被AOP过的真实类等工具函数.
+ * @author Administrator
+ * @date: 2019年12月26日下午2:13:28
+ */
 @SuppressWarnings("rawtypes")
 public class ReflectUtils
 {

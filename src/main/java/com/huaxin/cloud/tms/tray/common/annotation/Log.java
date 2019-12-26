@@ -11,9 +11,10 @@ import com.huaxin.cloud.tms.tray.common.enums.BusinessType;
 import com.huaxin.cloud.tms.tray.common.enums.OperatorType;
 
 /**
- * 自定义操作日志记录注解
- *
- * @author wangxiao
+ * 
+ * @Description: 自定义操作日志记录注解
+ * @author Administrator
+ * @date: 2019年12月26日下午2:10:34
  */
 @Target({ ElementType.PARAMETER, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

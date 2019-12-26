@@ -1,24 +1,16 @@
 package com.huaxin.cloud.tms.tray.common.scheduled;
 
-import com.huaxin.cloud.tms.tray.common.exception.BusinessException;
+import java.util.Calendar;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import com.huaxin.cloud.tms.tray.common.utils.ApplicationContextHolder;
 import com.huaxin.cloud.tms.tray.dao.SpurtcodeInfoMapper;
 import com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo;
 import com.huaxin.cloud.tms.tray.service.SpurtcodeInfoService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-
-import java.util.Calendar;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Description 生成喷码，与喷码机交互的定时任务

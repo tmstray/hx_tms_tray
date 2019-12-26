@@ -1,6 +1,5 @@
 package com.huaxin.cloud.tms.tray.common.utils;
 
-import com.huaxin.cloud.tms.tray.dao.SpurtcodeInfoMapper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

@@ -1,10 +1,7 @@
 package com.huaxin.cloud.tms.tray.dao;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import com.huaxin.cloud.tms.tray.common.annotation.DataSource;
 import com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo;
 import io.lettuce.core.dynamic.annotation.Param;
 

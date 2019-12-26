@@ -1,12 +1,9 @@
 package com.huaxin.cloud.tms.tray.common.manager;
-
 import java.util.TimerTask;
-
 import com.huaxin.cloud.tms.tray.common.utils.ip.AddressUtils;
 import com.huaxin.cloud.tms.tray.common.utils.spring.SpringUtils;
 import com.huaxin.cloud.tms.tray.entity.TrayLog;
 import com.huaxin.cloud.tms.tray.service.TrayLogService;
-
 
 /**
  * 异步工厂（产生任务用）

@@ -1,5 +1,7 @@
 package com.huaxin.cloud.tms.tray.common.file;
 
+import com.huaxin.cloud.tms.tray.common.exception.BaseException;
+
 /**
  * 
  * @Description: 文件信息异常类

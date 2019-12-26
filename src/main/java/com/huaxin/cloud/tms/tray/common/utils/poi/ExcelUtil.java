@@ -53,12 +53,12 @@ import com.huaxin.cloud.tms.tray.common.utils.reflect.ReflectUtils;
 import com.huaxin.cloud.tms.tray.common.utils.text.Convert;
 
 /**
-* 功能描述: Excel注解集
-* @param: 
-* @return: 
-* @auther: Administrator
-* @date: 2019/12/5 17:34
-*/
+ * 
+ * @Description: 功能描述: Excel注解集
+ * @author Administrator
+ * @date: 2019年12月26日下午2:11:08
+ * @param <T>
+ */
 public class ExcelUtil<T>
 {
     private static final Logger log = LoggerFactory.getLogger(ExcelUtil.class);

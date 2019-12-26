@@ -4,8 +4,10 @@ import com.huaxin.cloud.tms.tray.common.utils.MessageUtils;
 import com.huaxin.cloud.tms.tray.common.utils.StringUtils;
 
 /**
- * 基础异常
  * 
+ * @Description: 基础异常
+ * @author Administrator
+ * @date: 2019年12月24日下午3:12:42
  */
 public class BaseException extends RuntimeException
 {

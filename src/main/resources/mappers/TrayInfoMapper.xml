@@ -28,6 +28,8 @@
     <result column="rfid_health_name" jdbcType="VARCHAR" property="rfidHealthName" />
     <result column="meteriel_code" jdbcType="VARCHAR" property="meterielCode" />
     <result column="meteriel_desc" jdbcType="VARCHAR" property="meterielDesc" />
+    <result column="damaged_reason" jdbcType="VARCHAR" property="damagedReason" />
+    <result column="scrapped_reason" jdbcType="VARCHAR" property="scrappedReason" />
 
   </resultMap>
   <sql id="Base_Column_List">
@@ -50,12 +52,12 @@
 			 when t.rfid_health =2 then '报废'
 			 when t.rfid_health =3 then '冻结'
       else '其它' end rfid_health_name,
-
       t.init_time, t.binding_time,
       t.remarks, t.create_by, t.create_time,
       t.update_by, t.update_time, t.version,
       t.delete_flag,s.current_code,o.order_no,
-      s.meteriel_code,s.meteriel_desc
+      s.meteriel_code,s.meteriel_desc,
+      t.damaged_reason,t.scrapped_reason
   </sql>
   <select id="selectTrayInfoList" resultMap="TaryInfoMap">
     select 
@@ -89,7 +91,7 @@
     <if test="currentCode != null and currentCode !='' ">
         and s.current_code = #{currentCode,jdbcType=VARCHAR}
     </if>
-    order by t.init_time desc
+    order by t.init_time desc,t.rfid desc
   </select>
     <select id="selectTrayInfoFull" resultMap="TaryInfoMap">
         select
@@ -123,7 +125,7 @@
         <if test="currentCode != null and currentCode !='' ">
             and s.current_code = #{currentCode,jdbcType=VARCHAR}
         </if>
-        order by t.init_time desc
+        order by t.init_time desc,t.rfid desc
     </select>
   <select id="selectListGroupbyStatus" resultMap="TaryInfoMap">
     select
@@ -233,9 +235,11 @@
       <if test="leaveTime != null ">leave_time = #{leaveTime},</if>
       <if test="returnTime != null ">return_time = #{returnTime},</if>
       <if test="updateTime != null ">update_time = #{updateTime},</if>
-      <if test="remarks != null and remarks != '' ">remarks= CONCAT(IFNULL(remarks,''), #{remarks}),</if>
+      <if test="remarks != null and remarks != '' ">remarks=  #{remarks},</if>
       <if test="version != null and version != '' ">version= #{version},</if>
-      <if test="rfidHealth!= null ">rfid_health= #{rfidHealth}</if>
+      <if test="rfidHealth!= null ">rfid_health= #{rfidHealth},</if>
+      <if test="damagedReason!= null and damagedReason != ''">damaged_reason= #{damagedReason},</if>
+      <if test="scrappedReason!= null and scrappedReason != ''">scrapped_reason= #{scrappedReason},</if>
     </trim>
     where delete_flag =0
       <if test="factoryCode != null and factoryCode !='' ">

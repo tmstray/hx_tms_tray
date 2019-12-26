@@ -42,7 +42,7 @@ public class BaseEntity implements Serializable {
 	 * 	0	有效
 	 * 	1	无效
 	 * */
-    @ApiModelProperty(value = "版本号 " , example = "123")
+    @ApiModelProperty(value = "删除标志")
     private Integer deleteFlag;
     
     /** 备注 */

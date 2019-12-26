@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.huaxin.cloud.tms.tray.common.annotation.DataSource;
-import com.huaxin.cloud.tms.tray.common.enums.DataSourceType;
 import com.huaxin.cloud.tms.tray.common.utils.DateUtils;
 import com.huaxin.cloud.tms.tray.common.utils.text.Convert;
 import com.huaxin.cloud.tms.tray.dao.BillInfoMapper;
@@ -42,7 +40,6 @@ public class BillInfoServiceImpl implements BillInfoService
      * @return 交货单
      */
     @Override
-    @DataSource(value = DataSourceType.SLAVE)
     public String selectBillInfoByLCard(String lCard) {
     	
     	return billInfoMapper.selectBillInfoByLCard(lCard);

@@ -1,6 +1,16 @@
 package com.huaxin.cloud.tms.tray.service.impl;
 
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import com.huaxin.cloud.tms.tray.common.annotation.DataSource;
 import com.huaxin.cloud.tms.tray.common.constant.Constants;
+import com.huaxin.cloud.tms.tray.common.enums.DataSourceType;
 import com.huaxin.cloud.tms.tray.common.exception.BusinessException;
 import com.huaxin.cloud.tms.tray.common.utils.StringUtils;
 import com.huaxin.cloud.tms.tray.dao.RfidBindOrderDetailMapper;
@@ -13,15 +23,6 @@ import com.huaxin.cloud.tms.tray.entity.RfidBindOrderDetail;
 import com.huaxin.cloud.tms.tray.service.BillInfoService;
 import com.huaxin.cloud.tms.tray.service.RfidBindOrderService;
 import com.huaxin.cloud.tms.tray.service.TrayInfoService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 
 /**
@@ -29,6 +30,7 @@ import java.util.List;
  * 
  */
 @Service
+@DataSource(value = DataSourceType.MASTER)
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class RfidBindOrderServiceImpl implements RfidBindOrderService 
 {
@@ -133,14 +135,23 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
     	String currentCode = rfidBindOrderAndDetailDTO.getCurrentCode();
     	String rfid = rfidBindOrderAndDetailDTO.getRfidBindOrderDetails().get(0).getRfid();
     	
+    	//订单号已存在的情况
     	if(StringUtils.isNotEmpty(oldOrderNo)) {
     		//第一种情况 	oldCurrentCode != newCurrentCode && oldOrderNo ==  newOrderNo
         	if(!oldCurrentCode.equals(currentCode) && oldOrderNo.equals(orderNo)) {
 				result=rfidBindOrderMapper.updateCurrentCode(currentCode,oldOrderNo);
         	}else if(oldCurrentCode.equals(currentCode) && !oldOrderNo.equals(orderNo) && StringUtils.isNotEmpty(orderNo)) {
+        		RfidBindOrder rd = selectRfidBindOrderByOrderNo(orderNo);
+		    	if(StringUtils.isNotNull(rd)) {
+		    		throw new BusinessException("该订单已存在，请检查数据.");
+		    	}
         		//第二种情况 	oldCurrentCode = newCurrentCode && oldOrderNo !=  newOrderNo
 				result=rfidBindOrderMapper.updateOrderNo(orderNo, oldOrderNo);
         	}else if (!oldCurrentCode.equals(currentCode) && !oldOrderNo.equals(orderNo)) {
+        		RfidBindOrder rd = selectRfidBindOrderByOrderNo(orderNo);
+		    	if(StringUtils.isNotNull(rd)) {
+		    		throw new BusinessException("该订单已存在，请检查数据.");
+		    	}
         		//第三种情况 	oldCurrentCode != newCurrentCode && oldOrderNo !=  newOrderNo
 				result=rfidBindOrderMapper.updateOrderNoAndCurrentCode(orderNo, oldOrderNo, currentCode);
         	}else if(StringUtils.isEmpty(orderNo)) {
@@ -250,7 +261,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
         }	
 		StringBuilder successMsg = new StringBuilder();
         StringBuilder failureMsg = new StringBuilder();
-		int successNum = 0;
+//		int successNum = 0;
         int failureNum = 0;
 		for (RfidBindOrderDetailDTO rfidBindOrderDetailDTO : rfidBindOrderDetailDTOList) {
 			try {
@@ -265,7 +276,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 				 rfidBindOrderDetail.setRfid(rfidBindOrderDetailDTO.getRfid());
 				 rfidBindOrderDetail.setPid(rfidBindOrder.getId());
 				 rfidBindOrderDetailMapper.insertRfidBindOrderDetail(rfidBindOrderDetail);
-				 successNum++;
+//				 successNum++;
 	             successMsg.append("插入成功");
 			} catch (Exception e) {
 				failureNum++;

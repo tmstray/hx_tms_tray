@@ -77,6 +77,23 @@ public class ResTrayInfoDTO extends BaseEntity {
     @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
     private String endTime;
 
+    /** 报损原因 */
+    private String damagedReason;
+    /** 报废原因 */
+    private String scrappedReason;
+
+    public String getDamagedReason() {
+        return damagedReason;
+    }
+    public void setDamagedReason(String damagedReason) {
+        this.damagedReason = damagedReason;
+    }
+    public String getScrappedReason() {
+        return scrappedReason;
+    }
+    public void setScrappedReason(String scrappedReason) {
+        this.scrappedReason = scrappedReason;
+    }
 
     public String getStartTime() {
         return startTime;

@@ -5,11 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.huaxin.cloud.tms.tray.common.annotation.DataSource;
-import com.huaxin.cloud.tms.tray.common.constant.HttpStatus;
-import com.huaxin.cloud.tms.tray.common.enums.DataSourceType;
-import com.huaxin.cloud.tms.tray.common.exception.CustomException;
-import com.huaxin.cloud.tms.tray.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -18,8 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.huaxin.cloud.tms.tray.common.constant.Constants;
+import com.huaxin.cloud.tms.tray.common.constant.HttpStatus;
 import com.huaxin.cloud.tms.tray.common.exception.BusinessException;
+import com.huaxin.cloud.tms.tray.common.exception.CustomException;
 import com.huaxin.cloud.tms.tray.dao.RfidBindSpurtcodeMapper;
 import com.huaxin.cloud.tms.tray.dao.SpurtcodeInfoMapper;
 import com.huaxin.cloud.tms.tray.dao.TrayInfoMapper;
@@ -27,8 +25,6 @@ import com.huaxin.cloud.tms.tray.entity.RfidBindSpurtcode;
 import com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo;
 import com.huaxin.cloud.tms.tray.entity.TrayInfo;
 import com.huaxin.cloud.tms.tray.service.RfidBindSpurtcodeService;
-import com.huaxin.cloud.tms.tray.service.TrayInfoService;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * RFID绑定喷码信息Service业务层处理

@@ -1,5 +1,4 @@
 package com.huaxin.cloud.tms.tray.common.config;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -14,7 +13,7 @@ import org.springframework.web.filter.CorsFilter;
  */
 @Configuration
 public class GlobalCorsConfig {
-
+	
     /**
      * 允许跨域调用的过滤器
      */

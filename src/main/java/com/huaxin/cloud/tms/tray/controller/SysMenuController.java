@@ -39,7 +39,7 @@ public class SysMenuController extends BaseController
      * 获取菜单列表
      */
 //    @PreAuthorize("@ss.hasPermi('system:menu:list')")
-    @PostMapping("/list")
+    @GetMapping("/list")
     public ResultInfo list(SysMenu menu)
     {
         List<SysMenu> menus = menuService.selectMenuList(menu);

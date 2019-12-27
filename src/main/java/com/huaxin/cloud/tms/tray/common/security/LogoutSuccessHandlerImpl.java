@@ -41,7 +41,7 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler
         LoginUser loginUser = tokenService.getLoginUser(request);
         if (StringUtils.isNotNull(loginUser))
         {
-            String userName = loginUser.getUsername();
+//            String userName = loginUser.getUsername();
             // 删除用户缓存记录
             tokenService.delLoginUser(loginUser.getToken());
             // 记录用户退出日志

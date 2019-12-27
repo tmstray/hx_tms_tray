@@ -7,11 +7,15 @@ import com.huaxin.cloud.tms.tray.common.security.SysLoginService;
 import com.huaxin.cloud.tms.tray.common.security.SysPermissionService;
 import com.huaxin.cloud.tms.tray.common.security.TokenService;
 import com.huaxin.cloud.tms.tray.common.utils.ServletUtils;
+import com.huaxin.cloud.tms.tray.dto.Request.ReqUserDto;
 import com.huaxin.cloud.tms.tray.entity.SysMenu;
 import com.huaxin.cloud.tms.tray.entity.SysUser;
 import com.huaxin.cloud.tms.tray.service.SysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Set;
@@ -22,7 +26,6 @@ import java.util.Set;
  * @date: 2019年12月24日下午3:02:53
  */
 @RestController
-@CrossOrigin
 public class SysLoginController
 {
     @Autowired
@@ -43,7 +46,7 @@ public class SysLoginController
      * @return 结果
      */
     @PostMapping("/login")
-    public ResultInfo login(@RequestBody SysUser user)
+    public ResultInfo login(@RequestBody ReqUserDto user)
     {
         ResultInfo ajax = ResultInfo.success();
         // 生成令牌

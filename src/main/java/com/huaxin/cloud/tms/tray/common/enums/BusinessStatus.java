@@ -13,7 +13,7 @@ public enum BusinessStatus
     SUCCESS,
 
     /**
-     * 失败
+     * serialNumber
      */
     FAIL,
 }

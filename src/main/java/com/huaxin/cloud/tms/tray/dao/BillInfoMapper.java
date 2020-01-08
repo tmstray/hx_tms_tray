@@ -6,6 +6,7 @@ import java.util.List;
 import com.huaxin.cloud.tms.tray.common.annotation.DataSource;
 import com.huaxin.cloud.tms.tray.common.enums.DataSourceType;
 import com.huaxin.cloud.tms.tray.entity.BillInfo;
+import com.huaxin.cloud.tms.tray.entity.CardBill;
 
 /**
  * 交货单Mapper接口
@@ -13,6 +14,19 @@ import com.huaxin.cloud.tms.tray.entity.BillInfo;
  */
 public interface BillInfoMapper 
 {
+	
+	
+	/**
+     * 
+     * @Description: 根据磁卡号查询交货单
+     * @author Administrator
+     * @date: 2020年1月7日下午4:27:39
+     * @param card
+     * @return
+     */
+	@DataSource(value = DataSourceType.SLAVE)
+    public CardBill selectCardBillInfoByCard(String card);
+    
     /**
      * 查询交货单
      * 

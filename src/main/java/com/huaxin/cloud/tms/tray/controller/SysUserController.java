@@ -8,10 +8,14 @@ import com.huaxin.cloud.tms.tray.common.page.TableDataInfo;
 import com.huaxin.cloud.tms.tray.common.result.ResultInfo;
 import com.huaxin.cloud.tms.tray.common.utils.SecurityUtils;
 import com.huaxin.cloud.tms.tray.common.utils.StringUtils;
+import com.huaxin.cloud.tms.tray.dto.Request.UpdatePassWordUser;
 import com.huaxin.cloud.tms.tray.entity.SysUser;
 import com.huaxin.cloud.tms.tray.service.SysRoleService;
 import com.huaxin.cloud.tms.tray.service.SysUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +26,7 @@ import java.util.List;
  * @author Administrator
  * @date: 2019年12月24日下午2:45:34
  */
+@Api(tags = "用户管理")
 @RestController
 @RequestMapping("/system/user")
 public class SysUserController extends BaseController
@@ -35,7 +40,8 @@ public class SysUserController extends BaseController
     /**
      * 获取用户列表
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:list')")
+    @PreAuthorize("@ss.hasPermi('system:user:list')")
+    @ApiOperation(value = "获取用户列表")
     @PostMapping("/list")
     public TableDataInfo list(@RequestBody SysUser user)
     {
@@ -47,7 +53,8 @@ public class SysUserController extends BaseController
     /**
      * 根据用户编号获取详细信息
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:query')")
+    @PreAuthorize("@ss.hasPermi('system:user:query')")
+    @ApiOperation(value = "根据用户编号获取详细信息")
     @GetMapping(value = { "/", "/{userId}" })
     public ResultInfo getInfo(@PathVariable(value = "userId", required = false) Long userId)
     {
@@ -64,7 +71,8 @@ public class SysUserController extends BaseController
     /**
      * 新增用户
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:add')")
+    @PreAuthorize("@ss.hasPermi('system:user:add')")
+    @ApiOperation(value = "新增用户")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
     public ResultInfo add(@Validated @RequestBody SysUser user)
@@ -89,7 +97,8 @@ public class SysUserController extends BaseController
     /**
      * 修改用户
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:edit')")
+    @PreAuthorize("@ss.hasPermi('system:user:edit')")
+    @ApiOperation(value = "修改用户")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public ResultInfo edit(@Validated @RequestBody SysUser user)
@@ -110,7 +119,8 @@ public class SysUserController extends BaseController
     /**
      * 删除用户
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:remove')")
+    @PreAuthorize("@ss.hasPermi('system:user:remove')")
+    @ApiOperation(value = "删除用户")
     @Log(title = "用户管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{userIds}")
     public ResultInfo remove(@PathVariable Long[] userIds)
@@ -121,21 +131,26 @@ public class SysUserController extends BaseController
     /**
      * 重置密码
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:edit')")
+    @PreAuthorize("@ss.hasPermi('system:user:resetPwd')")
+    @ApiOperation(value = "重置密码")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/resetPwd")
-    public ResultInfo resetPwd(@RequestBody SysUser user)
+    public ResultInfo resetPwd(@RequestBody UpdatePassWordUser updateUser)
     {
-        userService.checkUserAllowed(user);
-        user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
-        user.setUpdateBy(SecurityUtils.getUsername());
-        return toAjax(userService.resetPwd(user));
+        SysUser sysUser = new SysUser();
+        sysUser.setUserId(updateUser.getUserId());
+        userService.checkUserAllowed(sysUser);
+        userService.checkOldPassword(updateUser.getUserId(),updateUser.getOldPassword());
+        sysUser.setPassword(SecurityUtils.encryptPassword(updateUser.getPassword()));
+        sysUser.setUpdateBy(SecurityUtils.getUsername());
+        return toAjax(userService.resetPwd(sysUser));
     }
 
     /**
      * 状态修改
      */
 //    @PreAuthorize("@ss.hasPermi('system:user:edit')")
+    @ApiOperation(value = "状态修改")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     public ResultInfo changeStatus(@RequestBody SysUser user)

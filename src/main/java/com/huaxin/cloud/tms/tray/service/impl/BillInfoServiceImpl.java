@@ -9,6 +9,7 @@ import com.huaxin.cloud.tms.tray.common.utils.DateUtils;
 import com.huaxin.cloud.tms.tray.common.utils.text.Convert;
 import com.huaxin.cloud.tms.tray.dao.BillInfoMapper;
 import com.huaxin.cloud.tms.tray.entity.BillInfo;
+import com.huaxin.cloud.tms.tray.entity.CardBill;
 import com.huaxin.cloud.tms.tray.service.BillInfoService;
 
 /**
@@ -106,4 +107,18 @@ public class BillInfoServiceImpl implements BillInfoService
     {
         return billInfoMapper.deleteBillInfoById(id);
     }
+
+    /**
+     * 
+     * @Description: 根据磁卡号查询交货单
+     * @author Administrator
+     * @date: 2020年1月7日下午4:27:39
+     * @param card
+     * @return
+     */
+	@Override
+	public CardBill selectCardBillInfoByCard(String card) {
+
+		return billInfoMapper.selectCardBillInfoByCard(card);
+	}
 }

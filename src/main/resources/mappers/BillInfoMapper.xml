@@ -59,6 +59,73 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="deleteStatus"    column="delete_status"    />
     </resultMap>
+    
+    <resultMap id="CardBillResultMap" type="com.huaxin.cloud.tms.tray.entity.CardBill">
+        <result column="CID" jdbcType="VARCHAR" property="cid"/>
+        <result column="C_Card" jdbcType="VARCHAR" property="cCard"/>
+        <result column="C_Card2" jdbcType="VARCHAR" property="cCard2"/>
+        <result column="C_Card3" jdbcType="VARCHAR" property="cCard3"/>
+        <result column="C_Owner" jdbcType="VARCHAR" property="cOwner"/>
+        <result column="C_TruckNo" jdbcType="VARCHAR" property="cTruckno"/>
+        <result column="C_Status" jdbcType="CHAR" property="cStatus"/>
+        <result column="C_Freeze" jdbcType="CHAR" property="cFreeze"/>
+        <result column="C_Used" jdbcType="CHAR" property="cUsed"/>
+        <result column="C_UseTime" jdbcType="INTEGER" property="cUsetime"/>
+        <result column="C_Man" jdbcType="VARCHAR" property="cMan"/>
+        <result column="C_Date" jdbcType="TIMESTAMP" property="cDate"/>
+        <result column="C_Memo" jdbcType="VARCHAR" property="cMemo"/>
+        <result column="L_ID" jdbcType="VARCHAR" property="lId"/>
+        <result column="L_Card" jdbcType="VARCHAR" property="lCard"/>
+        <result column="L_Type" jdbcType="VARCHAR" property="lType"/>
+        <result column="L_Stock" jdbcType="VARCHAR" property="lStock"/>
+        <result column="L_StockNo" jdbcType="VARCHAR" property="lStockno"/>
+        <result column="L_Truck" jdbcType="VARCHAR" property="lTruck"/>
+        <result column="L_TruckID" jdbcType="VARCHAR" property="lTruckid"/>
+        <result column="L_Value" jdbcType="DECIMAL" property="lValue"/>
+        <result column="L_CusType" jdbcType="VARCHAR" property="lCustype"/>
+        <result column="L_CusID" jdbcType="VARCHAR" property="lCusid"/>
+        <result column="l_CusName" jdbcType="VARCHAR" property="lCusname"/>
+        <result column="L_CusPY" jdbcType="VARCHAR" property="lCuspy"/>
+        <result column="L_Order" jdbcType="VARCHAR" property="lOrder"/>
+        <result column="L_OrderID" jdbcType="VARCHAR" property="lOrderid"/>
+        <result column="L_Seal" jdbcType="VARCHAR" property="lSeal"/>
+        <result column="L_IsVIP" jdbcType="VARCHAR" property="lIsvip"/>
+        <result column="L_Man" jdbcType="VARCHAR" property="lMan"/>
+        <result column="L_Date" jdbcType="TIMESTAMP" property="lDate"/>
+        <result column="L_PickDate" jdbcType="TIMESTAMP" property="lPickdate"/>
+        <result column="L_PickMan" jdbcType="VARCHAR" property="lPickman"/>
+        <result column="L_PostDay" jdbcType="VARCHAR" property="lPostday"/>
+        <result column="L_PostDate" jdbcType="TIMESTAMP" property="lPostdate"/>
+        <result column="L_PostMan" jdbcType="VARCHAR" property="lPostman"/>
+        <result column="L_FactNum" jdbcType="VARCHAR" property="lFactnum"/>
+        <result column="L_OutNum" jdbcType="VARCHAR" property="lOutnum"/>
+        <result column="L_OutFact" jdbcType="TIMESTAMP" property="lOutfact"/>
+        <result column="L_Status" jdbcType="VARCHAR" property="lStatus"/>
+        <result column="L_Action" jdbcType="VARCHAR" property="lAction"/>
+        <result column="L_Result" jdbcType="VARCHAR" property="lResult"/>
+        <result column="L_Memo" jdbcType="VARCHAR" property="lMemo"/>
+        <result column="L_CRM" jdbcType="VARCHAR" property="lCrm"/>
+        <result column="L_CRMFlag" jdbcType="VARCHAR" property="lCrmflag"/>
+        <result column="L_ExtInfo" jdbcType="INTEGER" property="lExtinfo"/>
+        <result column="L_ExtRes" jdbcType="INTEGER" property="lExtres"/>
+        <result column="L_DelMan" jdbcType="VARCHAR" property="lDelman"/>
+        <result column="L_DelDate" jdbcType="TIMESTAMP" property="lDeldate"/>
+        <result column="L_CRMItem" jdbcType="VARCHAR" property="lCrmitem"/>
+        <result column="L_VKBUR" jdbcType="VARCHAR" property="lVkbur"/>
+        <result column="L_BEZEIVK" jdbcType="VARCHAR" property="lBezeivk"/>
+        <result column="L_Billbak" jdbcType="VARCHAR" property="lBillbak"/>
+        <result column="L_Orderbak" jdbcType="VARCHAR" property="lOrderbak"/>
+        <result column="L_Offline" jdbcType="VARCHAR" property="lOffline"/>
+        <result column="L_CRMType" jdbcType="VARCHAR" property="lCrmtype"/>
+        <result column="L_EPYFlag" jdbcType="CHAR" property="lEpyflag"/>
+        <result column="L_EPYTime" jdbcType="TIMESTAMP" property="lEpytime"/>
+        <result column="L_EPYMan" jdbcType="VARCHAR" property="lEpyman"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="delete_status" jdbcType="INTEGER" property="deleteStatus"/>
+    </resultMap>
 
     <sql id="selectTmsBillInfoVo">
         select VBELN from S_BillInfo
@@ -322,5 +389,82 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    
+    <!-- 磁卡-订单查询 -->
+    <select id="selectCardBillInfoByCard" parameterType="String" resultMap="CardBillResultMap">
+        select
+        bc.ID,
+        bc.CID,
+        bc.C_Card,
+        bc.C_Card2,
+        bc.C_Card3,
+        bc.C_Owner,
+        bc.C_TruckNo,
+        bc.C_Status,
+        bc.C_Freeze,
+        bc.C_Used,
+        bc.C_UseTime,
+        bc.C_Man,
+        bc.C_Date,
+        bc.C_Memo,
+        b.L_ID,
+        b.L_Card,
+        b.L_Type,
+        b.L_Stock,
+        b.L_StockNo,
+        b.L_Truck,
+        b.L_TruckID,
+        b.L_Value,
+        b.L_CusType,
+        b.L_CusID,
+        b.L_CusName,
+        b.L_CusPY,
+        b.L_Order,
+        b.L_OrderID,
+        b.L_Seal,
+        b.L_IsVIP,
+        b.L_Man,
+        b.L_Date,
+        b.L_PickDate,
+        b.L_PickMan,
+        b.L_PostDay,
+        b.L_PostDate,
+        b.L_PostMan,
+        b.L_FactNum,
+        b.L_OutNum,
+        b.L_OutFact,
+        b.L_Status,
+        b.L_Action,
+        b.L_Result,
+        b.L_Memo,
+        b.L_CRM,
+        b.L_CRMFlag,
+        b.L_ExtInfo,
+        b.L_ExtRes,
+        b.L_DelMan,
+        b.L_DelDate,
+        b.L_CRMItem,
+        b.L_VKBUR,
+        b.L_BEZEIVK,
+        b.L_Billbak,
+        b.L_Orderbak,
+        b.L_Offline,
+        b.L_CRMType,
+        b.L_EPYFlag,
+        b.L_EPYTime,
+        b.L_EPYMan,
+        bc.create_by,
+        bc.update_by,
+        bc.create_time,
+        bc.update_time,
+        bc.delete_status
+        from tms_card_info bc Left Join tms_bill_info b
+        On b.L_Card=bc.C_Card WHERE
+		1 = 1 
+		AND b.L_Card = #{card}
+		ORDER BY
+		bc.ID DESC 
+        
+    </select>
     
 </mapper>

@@ -7,6 +7,10 @@ import com.huaxin.cloud.tms.tray.common.exception.BusinessException;
 import com.huaxin.cloud.tms.tray.common.exception.CustomException;
 import com.huaxin.cloud.tms.tray.common.result.ResultInfo;
 import com.huaxin.cloud.tms.tray.common.scheduled.SpurtCodeTask;
+import com.huaxin.cloud.tms.tray.dto.Request.ReqStartDTO;
+import com.huaxin.cloud.tms.tray.dto.Request.ReqUpdateCurrentNumber;
+import com.huaxin.cloud.tms.tray.dto.Request.ReqUpdateCurrentSpurtcode;
+import com.huaxin.cloud.tms.tray.dto.Request.ReqUpdateRuleDTO;
 import com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo;
 import com.huaxin.cloud.tms.tray.service.SpurtcodeInfoService;
 import io.swagger.annotations.Api;
@@ -20,7 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.Pattern;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
@@ -76,9 +80,8 @@ public class SpurtcodeInfoController extends BaseController {
     @ApiImplicitParam(name = "currentSpurtcode", value = "喷码")
     @PutMapping("/current-spurtcode")
     public ResultInfo updateCurrentSpurtcode(
-            @Pattern(regexp = "^[A-Za-z0-9]{18}$", message = "喷码必须为18位字母或数字组成的字符串")
-            @RequestParam("currentSpurtcode") String currentSpurtcode) {
-        return toAjax(spurtcodeInfoService.updateCurrentSpurtcode(currentSpurtcode));
+            @RequestBody @Valid ReqUpdateCurrentSpurtcode reqUpdateCurrentSpurtcode) {
+        return toAjax(spurtcodeInfoService.updateCurrentSpurtcode(reqUpdateCurrentSpurtcode.getCurrentSpurtcode()));
     }
 
     /**
@@ -86,10 +89,10 @@ public class SpurtcodeInfoController extends BaseController {
      */
     @Log(title = "修改当前已喷水泥包数", businessType = BusinessType.UPDATE)
     @ApiOperation(value = "修改当前已喷水泥包数")
-    @ApiImplicitParam(name = "currentNumber", value = "包数")
     @PutMapping("/current-number")
     public ResultInfo updateCurrentNumber(
-            @RequestParam int currentNumber) {
+            @RequestBody ReqUpdateCurrentNumber reqUpdateCurrentNumber) {
+        int currentNumber = reqUpdateCurrentNumber.getCurrentNumber();
         if (currentNumber < 0 || currentNumber > number) {
             log.error("currentNumber:{},水泥包数取值超出范围", currentNumber);
             throw new CustomException("水泥包数取值超出范围");
@@ -99,13 +102,12 @@ public class SpurtcodeInfoController extends BaseController {
 
     @Log(title = "开启喷码计数刷新定时任务", businessType = BusinessType.OTHER)
     @ApiOperation(value = "开启喷码计数刷新定时任务")
-    @ApiImplicitParam(name = "zId", value = "生产线id", dataType = "String")
     @PutMapping("/start")
-    public ResultInfo startCron1(@RequestParam String zId) {
+    public ResultInfo startCron1(@RequestBody ReqStartDTO reqStartDTO) {
         //保证线程只启动一次
-        if(flag){
+        if (flag) {
             SpurtCodeTask spurtCodeTask = new SpurtCodeTask();
-            Map<String, Object> map = spurtcodeInfoService.selectOutNum(zId);
+            Map<String, Object> map = spurtcodeInfoService.selectOutNum(reqStartDTO.getzId());
             if (map == null) {
                 log.error("result:{},生产编号表数据错误", map);
                 throw new BusinessException("生产编号表数据错误");
@@ -136,7 +138,7 @@ public class SpurtcodeInfoController extends BaseController {
     @ApiImplicitParam(name = "zId", value = "生产线id")
     @GetMapping("/rule")
     public ResultInfo selectRule(@RequestParam String zId) {
-       Map<String, Object> map = spurtcodeInfoService.selectOutNum(zId);
+        Map<String, Object> map = spurtcodeInfoService.selectOutNum(zId);
         if (map == null) {
             log.error("result:{},生产编号表数据错误", map);
             throw new BusinessException("生产编号表数据错误");
@@ -155,14 +157,12 @@ public class SpurtcodeInfoController extends BaseController {
     @Log(title = "修改喷码规则", businessType = BusinessType.UPDATE)
     @ApiOperation("修改喷码规则")
     @PutMapping("/rule")
-    public ResultInfo updateRule(
-            @Pattern(regexp = "^[A-Za-z0-9]{1,5}$", message = "规则必须为1~5位字母或数字组成的字符串")
-            @RequestParam String prefixRule, @RequestParam String zId) {
-        Map<String, Object> map = spurtcodeInfoService.selectOutNum(zId);
+    public ResultInfo updateRule( @RequestBody @Valid ReqUpdateRuleDTO reqUpdateRuleDTO) {
+        Map<String, Object> map = spurtcodeInfoService.selectOutNum(reqUpdateRuleDTO.getzId());
         if (map == null) {
             log.error("result:{},生产编号表数据错误", map);
             throw new BusinessException("生产编号表数据错误");
         }
-        return ResultInfo.success("修改成功", spurtcodeInfoService.updateRule(prefixRule, map));
+        return ResultInfo.success("修改成功", spurtcodeInfoService.updateRule(reqUpdateRuleDTO.getPrefixRule(), map));
     }
 }

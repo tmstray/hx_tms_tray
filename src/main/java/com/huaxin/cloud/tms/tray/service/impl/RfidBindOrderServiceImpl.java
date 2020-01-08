@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,33 +28,38 @@ import com.huaxin.cloud.tms.tray.service.TrayInfoService;
 
 /**
  * RFID绑定提货单信息Service业务层处理
- * 
+ *
  */
 @Service
 @DataSource(value = DataSourceType.MASTER)
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
-public class RfidBindOrderServiceImpl implements RfidBindOrderService 
+public class RfidBindOrderServiceImpl implements RfidBindOrderService
 {
 	private static final Logger log = LoggerFactory.getLogger(RfidBindOrderServiceImpl.class);
-	
+
     @Autowired
     private RfidBindOrderMapper rfidBindOrderMapper;
-    
+
     @Autowired
     private RfidBindOrderDetailMapper rfidBindOrderDetailMapper;
-    
+
     @Autowired
     private TrayInfoService trayInfoService;
-    
+
     @Autowired
     private RfidBindSpurtcodeMapper rfidBindSpurtcodeMapper;
-    
+
     @Autowired
     BillInfoService billInfoService;
-    
+
+	@Value("${spurtcode.factory-code}")
+	private String factoryCode;
+	@Value("${spurtcode.factory-name}")
+	private String factoryName;
+
     /**
      * 根据id查询RFID绑定提货单信息
-     * 
+     *
      * @param id RFID绑定提货单信息ID
      * @return RFID绑定提货单信息
      */
@@ -62,10 +68,10 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
     {
         return rfidBindOrderMapper.selectRfidBindOrderById(id);
     }
-    
+
     /**
      * 根据订单号查询RFID绑定提货单信息
-     * 
+     *
      * @param orderNo 订单号
      * @return RFID绑定提货单信息
      */
@@ -77,7 +83,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 
     /**
      * 查询RFID绑定提货单信息列表
-     * 
+     *
      * @param rfidBindOrder RFID绑定提货单信息
      * @return RFID绑定提货单信息
      */
@@ -86,10 +92,10 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
     {
         return rfidBindOrderMapper.selectRfidBindOrderList(rfidBindOrder);
     }
-    
+
     /**
      * 查询提货单信息列表
-     * 
+     *
      * @param rfidBindOrder RFID绑定提货单信息
      * @return RFID绑定提货单信息
      */
@@ -101,7 +107,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 
     /**
      * 新增RFID绑定提货单信息
-     * 
+     *
      * @param rfidBindOrder RFID绑定提货单信息
      * @return 结果
      */
@@ -115,8 +121,8 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
         return rfidBindOrderMapper.insertRfidBindOrder(rfidBindOrder);
     }
 
-    
-    
+
+
     /**
 	 * @Description: 第二次绑定
 	 * @author Administrator
@@ -134,7 +140,13 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
     	String orderNo = rfidBindOrderAndDetailDTO.getOrderNo();
     	String currentCode = rfidBindOrderAndDetailDTO.getCurrentCode();
     	String rfid = rfidBindOrderAndDetailDTO.getRfidBindOrderDetails().get(0).getRfid();
-    	
+
+//        rfidBindOrderAndDetailDTO.setMeterielCode("PC.245");
+//        rfidBindOrderAndDetailDTO.setMeterielDesc("袋装水泥");
+		// 物料编码 需要根据刷DL卡 获取提货信息 同时需要返回对应的 物料信息
+		rfidBindOrderAndDetailDTO.setFactoryCode(factoryCode);
+		rfidBindOrderAndDetailDTO.setFactoryName(factoryName);
+
     	//订单号已存在的情况
     	if(StringUtils.isNotEmpty(oldOrderNo)) {
     		//第一种情况 	oldCurrentCode != newCurrentCode && oldOrderNo ==  newOrderNo
@@ -169,7 +181,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 				RfidBindOrder rfidBindOrderC = new RfidBindOrder();
 				BeanUtils.copyProperties(rfidBindOrderAndDetailDTO, rfidBindOrderC);
 				result=rfidBindOrderMapper.insertRfidBindOrder(rfidBindOrderC);
-
+//                currentCode="1222222222222";
 				//插入订单明细表
 				for (RfidBindOrderDetail rfidBindOrderDetail : rfidBindOrderAndDetailDTO.getRfidBindOrderDetails()) {
 					rfidBindOrderDetail.setCurrentCode(currentCode);
@@ -181,8 +193,8 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 		}
     	return result;
     }
-    
-    
+
+
 
     /**
      * @param rfidBindOrder RFID绑定提货单信息
@@ -201,12 +213,12 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
     	 RfidBindOrder rfidBindOrderC =new RfidBindOrder();
     	 BeanUtils.copyProperties(rfidBindOrderAndDetailDTO, rfidBindOrderC);
     	 rfidBindOrderMapper.insertRfidBindOrder(rfidBindOrderC);
-    	
+
 		StringBuilder successMsg = new StringBuilder();
         StringBuilder failureMsg = new StringBuilder();
 		int successNum = 0;
         int failureNum = 0;
-        
+
         for (RfidBindOrderDetail rfidBindOrderDetail : rfidBindOrderAndDetailDTO.getRfidBindOrderDetails()) {
 			try {
 		    	 //插入rfid明细表
@@ -226,7 +238,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 	            failureMsg.append(msg + e.getMessage());
 	            log.error(msg, e);
 			}
-			
+
 		 }
 		if (failureNum > 0)
         {
@@ -242,13 +254,13 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 		String factoryCode = rfidBindOrderAndDetailDTO.getFactoryCode();
 		trayInfoService.updateStatusByWayBillNo(factoryCode, orderNo, Constants.RFID_STATUS_LOADEDCAR, null);
 		return successMsg.toString();
-        
-        
+
+
     }
-    
+
     /**
      * 修改RFID绑定提货单信息
-     * 
+     *
      * @param rfidBindOrder RFID绑定提货单信息
      * @return 结果
      */
@@ -258,7 +270,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
     	if (StringUtils.isNull(rfidBindOrderDetailDTOList) || rfidBindOrderDetailDTOList.size() == 0)
         {
             throw new BusinessException("RFID绑定提货单信息数据不能为空！");
-        }	
+        }
 		StringBuilder successMsg = new StringBuilder();
         StringBuilder failureMsg = new StringBuilder();
 //		int successNum = 0;
@@ -270,7 +282,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 				 if (StringUtils.isNull(rfidBindOrder))
 			        {
 			            throw new BusinessException("没有查到对应的订单号，请检查数据.");
-			        }	
+			        }
 				 RfidBindOrderDetail rfidBindOrderDetail = new RfidBindOrderDetail();
 				 rfidBindOrderDetail.setCurrentCode(rfidBindOrderDetailDTO.getCurrentCode());
 				 rfidBindOrderDetail.setRfid(rfidBindOrderDetailDTO.getRfid());
@@ -284,7 +296,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 	            failureMsg.append(msg + e.getMessage());
 	            log.error(msg, e);
 			}
-			
+
 		 }
 		if (failureNum > 0)
         {
@@ -302,11 +314,11 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 		trayInfoService.updateStatusByWayBillNo(factoryCode, orderNo, Constants.RFID_STATUS_LOADEDCAR, null);
 		return successMsg.toString();
     }
-    
+
 
     /**
      * 删除RFID绑定提货单信息对象
-     * 
+     *
      * @param ids 需要删除的数据ID
      * @return 结果
      */
@@ -318,7 +330,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 
     /**
      * 删除RFID绑定提货单信息信息
-     * 
+     *
      * @param id RFID绑定提货单信息ID
      * @return 结果
      */
@@ -330,25 +342,25 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 
     /**
      *  更新进厂时间
-     * 
+     *
      * @param tmsRfidBindOrder RFID绑定提货单信息
      * @return 结果
      */
 	@Override
 	public int updateEnteringTime(String orderNo) throws Exception{
-		
+
 		return rfidBindOrderMapper.updateEnteringTime(orderNo);
 	}
 
 	/**
      *  更新出厂时间
-     * 
+     *
      * @param tmsRfidBindOrder RFID绑定提货单信息
      * @return 结果
      */
 	@Override
 	public int updateLeaveTime(String orderNo) throws Exception{
-		
+
 		return rfidBindOrderMapper.updateLeaveTime(orderNo);
 	}
 
@@ -362,7 +374,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 		if (StringUtils.isNull(rfidBindOrderList) || rfidBindOrderList.size() == 0)
         {
             throw new BusinessException("RFID绑定提货单信息数据不能为空！");
-        }	
+        }
 		StringBuilder successMsg = new StringBuilder();
         StringBuilder failureMsg = new StringBuilder();
 		int successNum = 0;
@@ -397,16 +409,16 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
         }
 		return successMsg.toString();
 	}
-	
+
 	/**
-     *  根据提货单号更新装运状态 
-     * 
+     *  根据提货单号更新装运状态
+     *
      * @param tmsRfidBindOrder RFID绑定提货单信息
      * @return 结果
      */
 	@Override
 	public int updateShipmentStatus(String orderNo) throws Exception{
-		
+
 		return rfidBindOrderMapper.updateShipmentStatus(orderNo);
 	}
 
@@ -415,9 +427,9 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
      */
 	@Override
     public int unBind(RfidBindOrderDetailDTO rfidBindOrderDetailDTO) throws Exception{
-		
+
 		return rfidBindOrderDetailMapper.unBind(rfidBindOrderDetailDTO);
 	}
 
-	
+
 }

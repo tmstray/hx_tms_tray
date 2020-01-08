@@ -1,7 +1,6 @@
 package com.huaxin.cloud.tms.tray.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.huaxin.cloud.tms.tray.common.annotation.Log;
 import com.huaxin.cloud.tms.tray.common.constant.UserConstants;
 import com.huaxin.cloud.tms.tray.common.controller.BaseController;
@@ -22,12 +20,16 @@ import com.huaxin.cloud.tms.tray.common.result.ResultInfo;
 import com.huaxin.cloud.tms.tray.common.utils.SecurityUtils;
 import com.huaxin.cloud.tms.tray.entity.SysMenu;
 import com.huaxin.cloud.tms.tray.service.SysMenuService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 /**
  * 
  * @Description:菜单管理 
  * @author Administrator
  * @date: 2019年12月24日下午3:01:58
  */
+@Api(tags = "菜单管理")
 @RestController
 @RequestMapping("/system/menu")
 public class SysMenuController extends BaseController
@@ -38,7 +40,8 @@ public class SysMenuController extends BaseController
     /**
      * 获取菜单列表
      */
-//    @PreAuthorize("@ss.hasPermi('system:menu:list')")
+    @PreAuthorize("@ss.hasPermi('system:menu:list')")
+    @ApiOperation(value = "获取菜单列表")
     @GetMapping("/list")
     public ResultInfo list(SysMenu menu)
     {
@@ -49,7 +52,8 @@ public class SysMenuController extends BaseController
     /**
      * 根据菜单编号获取详细信息
      */
-//    @PreAuthorize("@ss.hasPermi('system:menu:query')")
+    @PreAuthorize("@ss.hasPermi('system:menu:query')")
+    @ApiOperation(value = "获取菜单详细信息")
     @GetMapping(value = "/{menuId}")
     public ResultInfo getInfo(@PathVariable Long menuId)
     {
@@ -59,6 +63,7 @@ public class SysMenuController extends BaseController
     /**
      * 获取菜单下拉树列表
      */
+    @ApiOperation(value = "获取菜单树列表")
     @GetMapping("/treeselect")
     public ResultInfo treeselect(SysMenu dept)
     {
@@ -69,6 +74,7 @@ public class SysMenuController extends BaseController
     /**
      * 加载对应角色菜单列表树
      */
+    @ApiOperation(value = "加载对应角色菜单列表树")
     @GetMapping(value = "/roleMenuTreeselect/{roleId}")
     public ResultInfo roleMenuTreeselect(@PathVariable("roleId") Long roleId)
     {
@@ -78,8 +84,9 @@ public class SysMenuController extends BaseController
     /**
      * 新增菜单
      */
-//    @PreAuthorize("@ss.hasPermi('system:menu:add')")
+    @PreAuthorize("@ss.hasPermi('system:menu:add')")
     @Log(title = "菜单管理", businessType = BusinessType.INSERT)
+    @ApiOperation(value = "新增菜单")
     @PostMapping
     public ResultInfo add(@Validated @RequestBody SysMenu menu)
     {
@@ -94,7 +101,8 @@ public class SysMenuController extends BaseController
     /**
      * 修改菜单
      */
-//    @PreAuthorize("@ss.hasPermi('system:menu:edit')")
+    @PreAuthorize("@ss.hasPermi('system:menu:edit')")
+    @ApiOperation(value = "修改菜单")
     @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public ResultInfo edit(@Validated @RequestBody SysMenu menu)
@@ -110,6 +118,7 @@ public class SysMenuController extends BaseController
     /**
      * 删除菜单
      */
+    @ApiOperation(value = "删除菜单")
     @PreAuthorize("@ss.hasPermi('system:menu:remove')")
     @Log(title = "菜单管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{menuId}")

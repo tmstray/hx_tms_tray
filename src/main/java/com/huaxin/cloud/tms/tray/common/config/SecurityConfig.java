@@ -17,7 +17,7 @@ import com.huaxin.cloud.tms.tray.common.security.JwtAuthenticationTokenFilter;
 import com.huaxin.cloud.tms.tray.common.security.LogoutSuccessHandlerImpl;
 
 /**
- * 
+ *
  * @Description: spring security配置
  * @author Administrator
  * @date: 2019年12月24日下午3:29:49
@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
      */
     @Autowired
     private UserDetailsService userDetailsService;
-    
+
     /**
      * 认证失败处理类
      */
@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
      */
     @Autowired
     private JwtAuthenticationTokenFilter authenticationTokenFilter;
-    
+
     /**
      * 解决 无法直接注入 AuthenticationManager
      *
@@ -92,6 +92,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 // 对于登录login 验证码captchaImage 允许匿名访问
 //                .antMatchers("/login", "/captchaImage").anonymous()
                 .antMatchers("/login").anonymous()
+                .antMatchers("/bill/*").anonymous()
+                .antMatchers("/order/secondBind/**").anonymous()
                 .antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
                 .permitAll()
                 .antMatchers(
@@ -117,7 +119,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         httpSecurity.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-    
+
     /**
      * 强散列哈希加密实现
      */

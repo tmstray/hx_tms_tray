@@ -1,8 +1,6 @@
 package com.huaxin.cloud.tms.tray.dto.Request;
-
-import com.huaxin.cloud.tms.tray.entity.BaseEntity;
-
-public class ReqUserDto extends BaseEntity {
+import java.io.Serializable;
+public class ReqUserDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String userName;

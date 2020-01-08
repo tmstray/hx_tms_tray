@@ -243,4 +243,21 @@ public class RfidBindOrderController extends BaseController{
 		}
     }
     
+    /**
+     * 第二次绑定
+     */
+    @Log(title = "第二次绑定", businessType = BusinessType.INSERT)
+    @PostMapping("/secondBind")
+    @ApiOperation(value = "第二次绑定")
+    public ResultInfo SecondBind(@RequestBody RfidBindOrderAndDetailDTO rfidBindOrderAndDetailDTO) throws BusinessException{
+    	try {
+        	return toAjax(rfidBindOrderService.SecondBind(rfidBindOrderAndDetailDTO));
+		} catch (Exception e) {
+			message = "第二次绑定失败";
+            log.error(message, e);
+            throw new BusinessException(StringUtils.isNotEmpty(e.getMessage()) ? e.getMessage() : message);
+		}
+    	
+    }
+    
 }

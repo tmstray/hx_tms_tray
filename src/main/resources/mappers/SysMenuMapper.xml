@@ -36,9 +36,6 @@
 			<if test="menuName != null and menuName != ''">
 				AND menu_name like concat('%', #{menuName}, '%')
 			</if>
-			<if test="visible != null and visible != ''">
-				AND visible = #{visible}
-			</if>
 		</where>
 		order by parent_id, order_num
 	</select>

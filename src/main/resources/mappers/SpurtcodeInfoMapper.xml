@@ -256,14 +256,14 @@
     <!-- 通过装车道号，查询出厂编号工厂信息-->
     <select id="selectOutNum" resultType="java.util.Map">
         select so.N_OutNum, so.N_Stock,so.N_Name,sf.F_ID,sf.F_Name
-        from S_ZTLines sz
-        left join S_OutNum so on sz.Z_StockNo = so.N_Stock
-        left join Sys_Factorys sf on so.N_Factory = sf.F_ID
+        from tms_ztlines_info sz
+        left join tms_outnum_info so on sz.Z_StockNo = so.N_Stock
+        left join tms_factorys sf on so.N_Factory = sf.F_ID
         where sz.Z_ID = #{zId}
     </select>
     <!-- 查询所有生产线接口-->
     <select id="selectZtlinesList" resultType="java.util.Map">
-        select Z_ID , Z_Stock , Z_PeerWeight from  S_ZTLines
+        select Z_ID , Z_Stock , Z_PeerWeight from  tms_ztlines_info
         where Z_ID like 'ZT%'
     </select>
 <!--    查询重复喷码-->

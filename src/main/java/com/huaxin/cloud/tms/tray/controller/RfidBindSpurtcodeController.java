@@ -7,6 +7,8 @@ import com.huaxin.cloud.tms.tray.common.controller.BaseController;
 import com.huaxin.cloud.tms.tray.common.enums.BusinessType;
 import com.huaxin.cloud.tms.tray.common.page.TableDataInfo;
 import com.huaxin.cloud.tms.tray.common.result.ResultInfo;
+import com.huaxin.cloud.tms.tray.dto.Request.ReqScrapDTO;
+import com.huaxin.cloud.tms.tray.dto.Request.ReqUpdateBindDTO;
 import com.huaxin.cloud.tms.tray.dto.Request.SpurtCodeBindRfidRequestDTO;
 import com.huaxin.cloud.tms.tray.service.RfidBindSpurtcodeService;
 import io.swagger.annotations.Api;
@@ -19,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.text.ParseException;
@@ -90,28 +93,18 @@ public class RfidBindSpurtcodeController extends BaseController {
 
     @Log(title = "托盘rfid和喷码绑定", businessType = BusinessType.UPDATE)
     @ApiOperation(value = "报废一次绑定关系接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam( name = "remark", value = "报废理由"),
-            @ApiImplicitParam( name = "rfid", value = "托盘rfid"),
-    })
     @PutMapping("/scrap")
     @ResponseBody
-    public ResultInfo scrap(@Length(max=50,message = "最多50个字符") @RequestParam String remark,
-                            @NotBlank(message = "不能为空") @RequestParam String rfid) {
-        return toAjax(rfidBindSpurtcodeService.scrap(remark,rfid));
+    public ResultInfo scrap(@RequestBody @Valid ReqScrapDTO reqScrapDTO) {
+        return toAjax(rfidBindSpurtcodeService.scrap(reqScrapDTO.getRemark(),reqScrapDTO.getRfid()));
     }
 
     @Log(title = "修改第一次绑定关系", businessType = BusinessType.UPDATE)
     @ApiOperation(value = "修改第一次绑定关系")
-    @ApiImplicitParams({
-            @ApiImplicitParam( name = "currentCode", value = "喷码"),
-            @ApiImplicitParam( name = "rfid", value = "托盘rfid"),
-    })
     @PutMapping()
     @ResponseBody
-    public ResultInfo updateBind(@Pattern(regexp = "^[A-Za-z0-9]{18}$", message = "喷码必须为18位字母或数字组成的字符串")
-                                     @RequestParam String currentCode, @RequestParam String rfid) {
-        return toAjax(rfidBindSpurtcodeService.updateBind(currentCode,rfid));
+    public ResultInfo updateBind(@RequestBody @Valid ReqUpdateBindDTO reqUpdateBindDTO) {
+        return toAjax(rfidBindSpurtcodeService.updateBind(reqUpdateBindDTO.getCurrentCode(),reqUpdateBindDTO.getRfid()));
     }
     
 }

@@ -2,6 +2,8 @@ package com.huaxin.cloud.tms.tray.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.huaxin.cloud.tms.tray.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -311,5 +313,22 @@ public class SysUserServiceImpl implements SysUserService
             checkUserAllowed(new SysUser(userId));
         }
         return userMapper.deleteUserByIds(userIds);
+    }
+
+    /**
+     * 校验旧密码
+     * @param userId
+     * @param oldPassword
+     */
+    @Override
+    public void checkOldPassword(Long userId, String oldPassword) {
+        SysUser sysUser = userMapper.selectUserById(userId);
+        if (sysUser==null){
+            throw new CustomException("用户不存在");
+        }
+        Boolean flag = SecurityUtils.matchesPassword(oldPassword, sysUser.getPassword());
+        if(!flag){
+            throw new CustomException("旧密码不正确");
+        }
     }
 }

@@ -11,6 +11,8 @@ import com.huaxin.cloud.tms.tray.dto.Request.ReqUserDto;
 import com.huaxin.cloud.tms.tray.entity.SysMenu;
 import com.huaxin.cloud.tms.tray.entity.SysUser;
 import com.huaxin.cloud.tms.tray.service.SysMenuService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +27,7 @@ import java.util.Set;
  * @author Administrator
  * @date: 2019年12月24日下午3:02:53
  */
+@Api(tags = "登录模块")
 @RestController
 public class SysLoginController
 {
@@ -45,6 +48,7 @@ public class SysLoginController
      * user：用户信息对象
      * @return 结果
      */
+    @ApiOperation(value = "登录")
     @PostMapping("/login")
     public ResultInfo login(@RequestBody ReqUserDto user)
     {
@@ -60,6 +64,7 @@ public class SysLoginController
      *
      * @return 用户信息
      */
+    @ApiOperation(value = "获取用户信息")
     @GetMapping("getInfo")
     public ResultInfo getInfo()
     {
@@ -81,6 +86,7 @@ public class SysLoginController
      *
      * @return 路由信息
      */
+    @ApiOperation(value = "获取路由信息")
     @GetMapping("getRouters")
     public ResultInfo getRouters()
     {

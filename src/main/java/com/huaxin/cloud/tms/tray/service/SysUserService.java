@@ -150,4 +150,10 @@ public interface SysUserService
      */
     public int deleteUserByIds(Long[] userIds);
 
+    /**
+     * 校验旧密码
+     * @param userId
+     * @param oldPassword
+     */
+    public void checkOldPassword(Long userId, String oldPassword);
 }

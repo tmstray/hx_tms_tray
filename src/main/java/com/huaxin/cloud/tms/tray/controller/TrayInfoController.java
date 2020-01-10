@@ -134,15 +134,19 @@ public class TrayInfoController extends BaseController
     @ApiOperation(value = "批量新增托盘")
     @PostMapping("/batchInsetTrayInfo")
     @Log(title = "托盘信息管理 [批量新增托盘]", businessType = BusinessType.INSERT)
-    public ResultInfo batchInsertTrayInfo(@RequestBody List<TrayInfo> trayInfo) throws BusinessException
+    public ResultInfo batchInsertTrayInfo(@RequestBody List<TrayInfo> trayInfo) throws Exception
     {
-        try {
-            return toAjax(trayInfoService.insertBatch(trayInfo));
-        } catch (Exception e) {
-            message = "批量新增托盘信息失败";
-            log.error(message, e);
-            throw new BusinessException(StringUtils.isNotEmpty(e.getMessage()) ? e.getMessage() : message);
-        }
+//        try {
+//            return toAjax(trayInfoService.insertBatch(trayInfo));
+//        } catch (Exception e) {
+//            message = "批量新增托盘信息失败";
+//            log.error(message, e);
+//            throw new BusinessException(StringUtils.isNotEmpty(e.getMessage()) ? e.getMessage() : message);
+//        }
+
+        String message =trayInfoService.insertBatchTrayInfo(trayInfo);
+        return ResultInfo.success(message);
+
     }
     /**
      * 变更托盘状态
@@ -319,7 +323,7 @@ public class TrayInfoController extends BaseController
         String message = trayInfoService.importTrayInfo(trayInfoList);
         return ResultInfo.success(message);
     }
-    
+
     @GetMapping("/importTemplate")
     @ApiOperation(value = "托盘导入模板管理")
     public ResultInfo importTemplate()

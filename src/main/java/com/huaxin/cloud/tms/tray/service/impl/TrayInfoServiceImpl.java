@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * 托盘基础信息管理Service业务层处理
- * 
+ *
  */
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
@@ -55,7 +55,7 @@ public class TrayInfoServiceImpl implements TrayInfoService
     private String factoryName;
     /**
      * 查询托盘基础信息管理列表
-     * 
+     *
      * @param trayInfo 托盘基础信息管理
      * @return 托盘基础信息管理
      */
@@ -85,7 +85,7 @@ public class TrayInfoServiceImpl implements TrayInfoService
 
     /**
      * 新增托盘基础信息管理
-     * 
+     *
      * @param trayInfo 托盘基础信息管理
      * @return 结果
      */
@@ -138,9 +138,51 @@ public class TrayInfoServiceImpl implements TrayInfoService
         return t;
     }
 
+
+    /**
+     * 批量空托盘回收
+     * @param trayInfoList
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public String insertBatchTrayInfo(List<TrayInfo> trayInfoList) throws  Exception{
+        String message="";
+        int sum=0;
+
+        // 计算成功和失败的数据：
+        int successNum = 0;
+        int failureNum = 0;
+
+        StringBuilder successMsg = new StringBuilder();
+        for (TrayInfo trayInfo : trayInfoList) {
+            sum++;
+            try{
+                trayInfo.setFactoryCode(factoryCode);
+                this.insertTrayInfo(trayInfo);
+                successNum++;
+            }catch (Exception e) {
+                failureNum++;
+                String msg = "<br/>" + failureNum + " 托盘回收失败："+e.getMessage();
+                logger.error(msg, e);
+                message=e.getMessage();
+            }
+        }
+        if (failureNum > 0 && successNum>0){
+            successMsg.insert(0, "提示：共提交："+sum+"条记录，其中(重复初始化)失败：" + failureNum + "条;   成功:" + successNum + " 条!");
+            throw new BusinessException(successMsg.toString());
+        }else if(failureNum > 0){
+            message= StringUtils.isNotEmpty(message)?message :"托盘回收错误";
+            successMsg.insert(0, "很抱歉，托盘回厂失败！共 " + failureNum + "条,"+message +"!");
+        }else{
+            successMsg.insert(0, "恭喜您，数据已全部入库成功！共 " + successNum + " 条!");
+        }
+        return successMsg.toString();
+    }
+
     /**
      * 修改托盘基础信息管理
-     * 
+     *
      * @param reqTrayInfo 托盘基础信息管理
      * @return 结果
      */
@@ -231,7 +273,7 @@ public class TrayInfoServiceImpl implements TrayInfoService
 
     /**
      * 删除托盘基础信息管理信息
-     * 
+     *
      * @param id 托盘基础信息管理ID
      * @return 结果
      */
@@ -270,10 +312,10 @@ public class TrayInfoServiceImpl implements TrayInfoService
         trayInfo.setUpdateBy("scrapOrLoss");
         return trayInfoMapper.updateByRfid(trayInfo);
     }
-    
+
     /**
      * 导入托盘数据
-     * 
+     *
      * @param trayInfoList 托盘数据列表
      * @return 结果
      */

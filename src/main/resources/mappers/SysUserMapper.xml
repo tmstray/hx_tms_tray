@@ -45,7 +45,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectUserList" parameterType="SysUser" resultMap="SysUserResult">
 		<include refid="selectUserVo"/>
-		where u.delete_flag = '0'
+		where u.delete_flag = 0
 		<if test="userName != null and userName != ''">
 			AND u.user_name like concat('%', #{userName}, '%')
 		</if>
@@ -143,7 +143,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  	</delete>
  	
  	<delete id="deleteUserByIds" parameterType="Long">
- 		update tms_sys_user set delete_flag = '2' where user_id in
+ 		update tms_sys_user set delete_flag = 2 where user_id in
  		<foreach collection="array" item="userId" open="(" separator="," close=")">
  			#{userId}
         </foreach> 

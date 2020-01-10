@@ -28,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectRoleList" parameterType="SysRole" resultMap="SysRoleResult">
 		<include refid="selectRoleVo"/>
-		where r.delete_flag = '0'
+		where r.delete_flag = 0
 		<if test="roleName != null and roleName != ''">
 			AND r.role_name like concat('%', #{roleName}, '%')
 		</if>
@@ -39,12 +39,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
 	<select id="selectRolePermissionByUserId" parameterType="Long" resultMap="SysRoleResult">
 		<include refid="selectRoleVo"/>
-		WHERE r.delete_flag = '0' and ur.user_id = #{userId}
+		WHERE r.delete_flag = 0 and ur.user_id = #{userId}
 	</select>
 	
 	<select id="selectRoleAll" resultMap="SysRoleResult">
 		<include refid="selectRoleVo"/>
-		where r.delete_flag = '0'
+		where r.delete_flag = 0
 	</select>
 	
 	<select id="selectRoleListByUserId" parameterType="Long" resultType="Integer">
@@ -62,7 +62,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<select id="selectRolesByUserName" parameterType="String" resultMap="SysRoleResult">
 		<include refid="selectRoleVo"/>
-		WHERE r.delete_flag = '0' and u.user_name = #{userName}
+		WHERE r.delete_flag = 0 and u.user_name = #{userName}
 	</select>
 	
 	<select id="checkRoleNameUnique" parameterType="String" resultMap="SysRoleResult">
@@ -120,7 +120,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  	</delete>
  	
  	<delete id="deleteRoleByIds" parameterType="Long">
- 	    update tms_sys_role set delete_flag = '2' where role_id in
+ 	    update tms_sys_role set delete_flag = 2 where role_id in
  		<foreach collection="array" item="roleId" open="(" separator="," close=")">
  			#{roleId}
         </foreach> 

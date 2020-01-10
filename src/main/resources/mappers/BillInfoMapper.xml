@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huaxin.cloud.tms.tray.dao.BillInfoMapper">
-    
+
     <resultMap type="BillInfo" id="TmsBillInfoResult">
         <result property="id"    column="ID"    />
         <result property="cid"    column="CID"    />
@@ -59,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="deleteStatus"    column="delete_status"    />
     </resultMap>
-    
+
     <resultMap id="CardBillResultMap" type="com.huaxin.cloud.tms.tray.entity.CardBill">
         <result column="CID" jdbcType="VARCHAR" property="cid"/>
         <result column="C_Card" jdbcType="VARCHAR" property="cCard"/>
@@ -129,7 +129,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectTmsBillInfoVo">
         select VBELN from S_BillInfo
-        <!-- select 
+        <!-- select
         		 ID, CID, L_ID, L_Card, L_Type, L_Stock, L_StockNo, L_Truck, L_TruckID, L_Value, L_CusType, L_CusID,
         		 l_cusName, L_CusPY, L_Order, L_OrderID, L_Seal, L_IsVIP, L_Man, L_Date, L_PickDate, L_PickMan, L_PostDay,
          		 L_PostDate, L_PostMan, L_FactNum, L_OutNum, L_OutFact, L_Status, L_Action, L_Result, L_Memo, L_CRM, L_CRMFlag,
@@ -141,7 +141,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectTmsBillInfoList" parameterType="BillInfo" resultMap="TmsBillInfoResult">
         <include refid="selectTmsBillInfoVo"/>
-        <where>  
+        <where>
             <if test="cid != null  and cid != ''"> and CID = #{cid}</if>
             <if test="lId != null  and lId != ''"> and L_ID = #{lId}</if>
             <if test="lCard != null  and lCard != ''"> and L_Card = #{lCard}</if>
@@ -192,22 +192,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deleteStatus != null "> and delete_status = #{deleteStatus}</if>
         </where>
     </select>
-    
+
     <select id="selectBillInfoById" parameterType="Integer" resultMap="TmsBillInfoResult">
         <include refid="selectTmsBillInfoVo"/>
         where ID = #{id}
     </select>
-    
+
     <!-- <select id="selectBillInfoByLCard" parameterType="String" resultMap="TmsBillInfoResult">
         <include refid="selectTmsBillInfoVo"/>
         where L_Card = #{lCard}
     </select> -->
-    
+
     <select id="selectBillInfoByLCard" parameterType="String" resultType="java.lang.String">
         <include refid="selectTmsBillInfoVo"/>
         where VBELN = #{lCard}
     </select>
-        
+
     <insert id="insertTmsBillInfo" parameterType="BillInfo" useGeneratedKeys="true" keyProperty="id">
         insert into sys_tms_bill_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -384,12 +384,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteTmsBillInfoByIds" parameterType="String">
-        delete from sys_tms_bill_info where ID in 
+        delete from sys_tms_bill_info where ID in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
-    
+
     <!-- 磁卡-订单查询 -->
     <select id="selectCardBillInfoByCard" parameterType="String" resultMap="CardBillResultMap">
         select
@@ -460,11 +460,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         bc.delete_status
         from tms_card_info bc Left Join tms_bill_info b
         On b.L_Card=bc.C_Card WHERE
-		1 = 1 
-		AND b.L_Card = #{card}
+		1 = 1
+		AND bc.C_Card = #{card}
 		ORDER BY
-		bc.ID DESC 
-        
+		bc.ID DESC
+
     </select>
-    
+
 </mapper>

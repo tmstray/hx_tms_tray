@@ -7,11 +7,11 @@ import com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo;
 
 /**
  * 喷码信息Service接口
- * 
+ *
  * @author ruoyi
  * @date 2019-10-17
  */
-public interface SpurtcodeInfoService 
+public interface SpurtcodeInfoService
 {
 
     /**
@@ -23,7 +23,7 @@ public interface SpurtcodeInfoService
      * 根据规则生成喷码，插入数据库，并传给喷码机，开始喷码
      * @return
      */
-    public int beginGenerateSpurtcode( Map<String, Object> map);
+    public String beginGenerateSpurtcode( Map<String, Object> map);
 
     /**
      * 查询所有生产线接口
@@ -63,4 +63,6 @@ public interface SpurtcodeInfoService
      * @return
      */
     Map<String ,Object> selectOutNum(String zId);
+
+    String getCounter(Integer num ,Map<String, Object> outNumMap) ;
 }

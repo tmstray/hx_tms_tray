@@ -51,7 +51,7 @@ public class SysRoleController extends BaseController
     /**
      * 根据角色编号获取详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:role:query')")
+//    @PreAuthorize("@ss.hasPermi('system:role:query')")
     @ApiOperation(value = "根据角色编号获取详细信息")
     @GetMapping(value = "/{roleId}")
     public ResultInfo getInfo(@PathVariable Long roleId)
@@ -106,7 +106,7 @@ public class SysRoleController extends BaseController
     /**
      * 修改保存数据权限
      */
-    @PreAuthorize("@ss.hasPermi('system:role:edit')")
+//    @PreAuthorize("@ss.hasPermi('system:role:edit')")
     @ApiOperation(value = "修改保存数据权限")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @PutMapping("/dataScope")
@@ -119,7 +119,7 @@ public class SysRoleController extends BaseController
     /**
      * 状态修改
      */
-    @PreAuthorize("@ss.hasPermi('system:role:edit')")
+//    @PreAuthorize("@ss.hasPermi('system:role:edit')")
     @ApiOperation(value = "状态修改")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
@@ -145,7 +145,7 @@ public class SysRoleController extends BaseController
     /**
      * 获取角色选择框列表
      */
-    @PreAuthorize("@ss.hasPermi('system:role:query')")
+//    @PreAuthorize("@ss.hasPermi('system:role:query')")
     @ApiOperation(value = "获取角色选择框列表")
     @GetMapping("/optionselect")
     public ResultInfo optionselect()

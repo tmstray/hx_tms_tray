@@ -2,7 +2,10 @@ package com.huaxin.cloud.tms.tray.service.impl;
 
 import com.huaxin.cloud.tms.tray.common.constant.Constants;
 import com.huaxin.cloud.tms.tray.common.exception.BusinessException;
+import com.huaxin.cloud.tms.tray.common.security.LoginUser;
+import com.huaxin.cloud.tms.tray.common.security.TokenService;
 import com.huaxin.cloud.tms.tray.common.utils.DateUtils;
+import com.huaxin.cloud.tms.tray.common.utils.ServletUtils;
 import com.huaxin.cloud.tms.tray.common.utils.StringUtils;
 import com.huaxin.cloud.tms.tray.dao.RfidBindSpurtcodeMapper;
 import com.huaxin.cloud.tms.tray.dao.TrayInfoMapper;
@@ -10,6 +13,7 @@ import com.huaxin.cloud.tms.tray.dto.Request.ReqTrayInfoDTO;
 import com.huaxin.cloud.tms.tray.dto.Request.RfidBindOrderAndDetailDTO;
 import com.huaxin.cloud.tms.tray.dto.Response.ResTrayInfoDTO;
 import com.huaxin.cloud.tms.tray.entity.RfidBindOrderDetail;
+import com.huaxin.cloud.tms.tray.entity.SysUser;
 import com.huaxin.cloud.tms.tray.entity.TrayInfo;
 import com.huaxin.cloud.tms.tray.service.RfidBindOrderService;
 import com.huaxin.cloud.tms.tray.service.RfidBindSpurtcodeService;
@@ -48,6 +52,9 @@ public class TrayInfoServiceImpl implements TrayInfoService
 
     @Autowired
     private RfidBindOrderService rfidBindOrderService;
+
+    @Autowired
+    private TokenService tokenService;
 
     @Value("${spurtcode.factory-code}")
     private String factoryCode;
@@ -92,6 +99,10 @@ public class TrayInfoServiceImpl implements TrayInfoService
     @Override
     public int insertTrayInfo(TrayInfo trayInfo) throws  Exception
     {
+        //获取登录用户信息
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        SysUser user = loginUser.getUser();
+
         String rfid= trayInfo.getRfid();
         rfidBindSpurtcodeMapper.updateIsHavaing(rfid); // 设置托盘与水泥码绑定使用状态
 
@@ -103,7 +114,7 @@ public class TrayInfoServiceImpl implements TrayInfoService
                BeanUtils.copyProperties(resTrayInfoDTO,infoEntity);
                infoEntity.setInitTime(DateUtils.getNowDate());
                infoEntity.setRfidStatus(Constants.RFID_STATUS_EMPTY); // 空托盘
-               infoEntity.setUpdateBy("update");
+               infoEntity.setUpdateBy(user.getUserName());
                infoEntity.setBindingTime(null);
                infoEntity.setUpdateTime(DateUtils.getNowDate());
                infoEntity.setReturnTime(DateUtils.getNowDate());
@@ -118,7 +129,7 @@ public class TrayInfoServiceImpl implements TrayInfoService
             trayInfo.setCreateTime(DateUtils.getNowDate());
             trayInfo.setRfidStatus(Constants.RFID_STATUS_EMPTY);
             trayInfo.setRfidType(Constants.RFID_TYPE_WOOD);
-            trayInfo.setCreateBy("Test001");
+            trayInfo.setCreateBy(user.getUserName());
             trayInfo.setVersion("1.0");
             trayInfo.setInitTime(DateUtils.getNowDate());
             trayInfo.setFactoryName(factoryName);
@@ -189,6 +200,10 @@ public class TrayInfoServiceImpl implements TrayInfoService
     @Override
     @Transactional
     public int modifyTrayInfo(ReqTrayInfoDTO reqTrayInfo) throws  Exception {
+        //获取登录用户信息
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        SysUser user = loginUser.getUser();
+
         int result =0;
         String orderNo=reqTrayInfo.getOrderNo();
         String currentCode =reqTrayInfo.getCurrentCode();
@@ -241,7 +256,7 @@ public class TrayInfoServiceImpl implements TrayInfoService
         if(StringUtils.isNotEmpty(orderNo) || StringUtils.isNotEmpty(oldOrderNo)) {
             TrayInfo trayInfoVo = new TrayInfo();
             trayInfoVo.setRfid(rfid);
-            trayInfoVo.setUpdateBy("addOrderNo");
+            trayInfoVo.setUpdateBy(user.getUserName());
             trayInfoVo.setUpdateTime(new Date());
             trayInfoVo.setRfidStatus(Constants.RFID_STATUS_LOADEDCAR);// 已装车
             trayInfoVo.setBindingTime(reqTrayInfo.getBindingTime());
@@ -290,18 +305,26 @@ public class TrayInfoServiceImpl implements TrayInfoService
 
     @Override
     public int freeZeTrayInfo(ReqTrayInfoDTO reqTrayInfo) throws  Exception{
+        //获取登录用户信息
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        SysUser user = loginUser.getUser();
+
         TrayInfo trayInfo =new TrayInfo();
         trayInfo.setRfid(reqTrayInfo.getRfid());
         trayInfo.setFactoryCode(factoryCode);
         trayInfo.setRfidHealth(Constants.RFID_HEALTH_FROZEN); // 冻结托盘 修改托盘健康状态
         trayInfo.setUpdateTime(DateUtils.getNowDate());
-        trayInfo.setUpdateBy("freeZe");
+        trayInfo.setUpdateBy(user.getUserName());
         return trayInfoMapper.updateByRfid(trayInfo);
     }
 
 
     @Override
     public int updateTrayInfoByRfid(ReqTrayInfoDTO reqTrayInfo) throws  Exception{
+        //获取登录用户信息
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        SysUser user = loginUser.getUser();
+
         TrayInfo trayInfo =new TrayInfo();
         trayInfo.setRfid(reqTrayInfo.getRfid());
         trayInfo.setRfidHealth(reqTrayInfo.getRfidHealth()); // 修改托盘健状态  报废或报损
@@ -309,7 +332,7 @@ public class TrayInfoServiceImpl implements TrayInfoService
         trayInfo.setRemarks(reqTrayInfo.getRemarks());
         trayInfo.setDamagedReason(reqTrayInfo.getDamagedReason());
         trayInfo.setScrappedReason(reqTrayInfo.getScrappedReason());
-        trayInfo.setUpdateBy("scrapOrLoss");
+        trayInfo.setUpdateBy(user.getUserName());
         return trayInfoMapper.updateByRfid(trayInfo);
     }
 

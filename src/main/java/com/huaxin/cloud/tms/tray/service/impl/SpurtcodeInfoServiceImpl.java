@@ -1,12 +1,17 @@
 package com.huaxin.cloud.tms.tray.service.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import com.huaxin.cloud.tms.tray.counter.ConfigUtil;
+import com.huaxin.cloud.tms.tray.common.utils.StringUtils;
+import com.huaxin.cloud.tms.tray.printer.*;
+import com.huaxin.cloud.tms.tray.printer.config.ParamConfigTcp;
+import com.huaxin.cloud.tms.tray.printer.exception.TcpException;
+import com.huaxin.cloud.tms.tray.printer.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +46,12 @@ public class SpurtcodeInfoServiceImpl implements SpurtcodeInfoService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private DWPrintTest dwPrintTest;
+
+    @Autowired
+    private SpurtcodeInfoService spurtcodeInfoService;
+
     /**
      * @return 喷码机信息对象
      * @Author lixin
@@ -59,9 +70,9 @@ public class SpurtcodeInfoServiceImpl implements SpurtcodeInfoService {
      * @param
      * @return
      */
-    @Override
-    public int beginGenerateSpurtcode(Map<String, Object> map) {
+    public String beginGenerateSpurtcode(Map<String, Object> map) {
         int serialNumber = 1;
+        String currentCode="";
         Boolean flag = stringRedisTemplate.hasKey("serialNumber");
         if (!flag) {
             //自增流水号，redis流水号每天晚上12点失效
@@ -70,10 +81,10 @@ public class SpurtcodeInfoServiceImpl implements SpurtcodeInfoService {
             cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE) + 1, 0, 0, 0);
             long endTime = cal.getTime().getTime();
             stringRedisTemplate.opsForValue().set("serialNumber", "1", endTime - startTmie, TimeUnit.MILLISECONDS);
-            beginSpurtcode(serialNumber, map);
+            currentCode= beginSpurtcode(serialNumber, map);
         } else {
             serialNumber = Integer.valueOf(stringRedisTemplate.opsForValue().get("serialNumber"));
-            beginSpurtcode(serialNumber, map);
+            currentCode= beginSpurtcode(serialNumber, map);
         }
         //数据库操作成功时自增流水号,保证mySql和redis一致性
         try {
@@ -84,10 +95,10 @@ public class SpurtcodeInfoServiceImpl implements SpurtcodeInfoService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw new BusinessException("redis操作流水号失败");
         }
-        return 1;
+        return currentCode;
     }
 
-    private void beginSpurtcode(int serialNumber, Map<String, Object> map) {
+    private String  beginSpurtcode(int serialNumber, Map<String, Object> map) {
         //获取工厂信息
         SpurtcodeInfo spurtcodeInfo = new SpurtcodeInfo();
         spurtcodeInfo.setMeterielCode((String) map.get(Constants.N_STOCK));
@@ -112,15 +123,31 @@ public class SpurtcodeInfoServiceImpl implements SpurtcodeInfoService {
         SpurtcodeInfo spurtcodeInfoOrign = spurtcodeInfoMapper.selectSpurtcodeByCurrentCode(currentCode);
         if (spurtcodeInfoOrign != null) {
             stringRedisTemplate.opsForValue().increment("serialNumber");
-            return;
+            return null;
         }
         //2.传给喷码机，目前不清楚喷码机是否能交互，需要确认是否成功，或者默认成功
         // TODO: 2019/10/23
+        //调用喷码机
+        String message="喷码成功！";
+        try {
+            log.info("开始调用喷码机，(修改喷码时：) 当前喷码:{}",currentCode); ;
+            tcpPrintCurrentCode(currentCode);
+        }catch (TcpException e1) {
+            message=e1.getMessage();
+            e1.printStackTrace();
+           log.error("修改当前喷码1：" +message); ;
+        } catch (IOException e2) {
+            message=e2.getMessage();
+            e2.printStackTrace();
+            log.error("修改当前喷码2：" +message); ;
+        }
+
         //3.第二步成功反馈或默认成功情况下，将喷码信息插入数据库
         spurtcodeInfo.setCurrentCode(currentCode);
         spurtcodeInfo.setCurrentNumber(1);
         spurtcodeInfo.setVersion(Constants.VERSION);
         spurtcodeInfoMapper.insertSelective(spurtcodeInfo);
+        return  currentCode;
     }
 
     /**
@@ -138,9 +165,23 @@ public class SpurtcodeInfoServiceImpl implements SpurtcodeInfoService {
     @Override
     public int updateCurrentSpurtcode(String currentSpurtcode) {
         int count = spurtcodeInfoMapper.selectRepetitive(currentSpurtcode);
+        String message="";
         if (count == 1) {
             log.error("喷码重复");
             throw new CustomException("喷码重复", HttpStatus.BAD_REQUEST);
+        }
+        try {
+            System.out.println("开始调用喷码机，当前喷码:==="+ currentSpurtcode) ;
+            tcpPrintCurrentCode(currentSpurtcode);
+            System.out.println("开始调用喷码机，当前喷码:==="+ currentSpurtcode) ;
+        }catch (TcpException e1) {
+            message=e1.getMessage();
+            e1.printStackTrace();
+            System.out.println("调用喷码机异常1：" +currentSpurtcode) ;
+        } catch (IOException e2) {
+            message=e2.getMessage();
+            e2.printStackTrace();
+            System.out.println("调用喷码机异常2：" +message) ;
         }
         return spurtcodeInfoMapper.updateCurrentSpurtcode(currentSpurtcode);
     }
@@ -215,6 +256,99 @@ public class SpurtcodeInfoServiceImpl implements SpurtcodeInfoService {
     @Override
     @DataSource(value = DataSourceType.SLAVE)
     public Map<String, Object> selectOutNum(String zId) {
+//        Map map  = new HashMap();
+//        map.put("N_OutNum","GH1258454F098");
+//        map.put("N_Stock","000001800000000060");
+//        map.put("N_Name","P·O42.5(50kg包装)");
+//        map.put("F_ID","HS");
+//        map.put("F_Name","黄石工厂");
         return spurtcodeInfoMapper.selectOutNum(zId);
+//        return map;
+    }
+
+    /**
+     * 获取喷码机信息
+     * @param number
+     * @return
+     */
+    @Override
+    public String getCounter(Integer number,Map<String, Object> map) {
+//        Map map  = new HashMap();
+//        map.put("N_OutNum","GH1258454F098");
+//        map.put("N_Stock","000001800000000060");
+//        map.put("N_Name","P·O42.5(50kg包装)");
+//        map.put("F_ID","HS");
+//        map.put("F_Name","黄石工厂");
+
+        String message ="操作成功";
+        if(0==number){
+            return "";
+        }
+        int currentNumber = number%40;
+        String cuuurentCode="";
+        //2.更新数据库
+        SpurtcodeInfo spurtcodeInfo = spurtcodeInfoMapper.selectCurrentSpurtcode();
+        //查询是否有当前喷码，有当前喷就更新，没有就重新生成喷码
+        if (spurtcodeInfo != null) {
+            //3.如果当前包数为四十，更新当前喷码状态为1，并生成新的喷码，插入数据库，并传输给喷码机
+//            cuuurentCode=spurtcodeInfo.getCurrentCode();
+            if (currentNumber == 0) {
+                log.info("当前包数为40，重新生成喷码");
+                spurtcodeInfo.setCurrentNumber(40);
+                spurtcodeInfoMapper.updateByPrimaryKeySelective(spurtcodeInfo);
+                //修改当前喷码状态，当前使用喷码->等待绑定喷码
+                spurtcodeInfoMapper.updateCurrentStatus();
+                //插入新的喷码数据
+                cuuurentCode= beginGenerateSpurtcode(map);
+            }else {
+                spurtcodeInfo.setCurrentNumber(currentNumber);
+                spurtcodeInfoMapper.updateByPrimaryKeySelective(spurtcodeInfo);
+            }
+            //更新失败，没有正在喷的喷码，生成一个新喷码，给喷码机使用
+        } else {
+            //没有当前喷码，重新生成当前喷码
+            cuuurentCode=beginGenerateSpurtcode(map);
+        }
+        return message;
+    }
+
+    /**
+     * 调用喷码机：
+     * @param printCode
+     * @throws TcpException
+     * @throws IOException
+     */
+    public void tcpPrintCurrentCode(String printCode) throws TcpException, IOException {
+        TcpListener listener = new TcpListener();
+        ParamConfigTcp paramConfigTcp = new ParamConfigTcp();
+        //设置TCP地址
+//        paramConfigTcp.setHost("192.168.10.11");
+        paramConfigTcp.setHost(ConfigUtil.getProperties("printer.controller.serverIp"));
+        //设置TCP端口号
+//        paramConfigTcp.setPort(1024);
+        paramConfigTcp.setPort(Integer.parseInt(ConfigUtil.getProperties("printer.controller.serverPort")));
+        if(StringUtils.isEmpty(printCode)){
+            printCode="12222222222000001";
+        }
+
+        //加载TCP配置
+        listener.init(paramConfigTcp);
+        writeCommand(listener,printCode.getBytes("GB2312"));
+
+    }
+
+    public void writeCommand(TcpListener tcpListener, byte[] data) throws IOException, TcpException {
+        byte[] head = {0x1B, 0x41, 0x29};
+        byte length = (byte) (34 + data.length);
+        byte body = 0x20;
+        byte[] footer = {0x0D};
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        os.write(head);
+        os.write(length);
+        os.write(body);
+        os.write(data);
+        os.write(footer);
+        tcpListener.send(os.toByteArray());
+        System.out.println(String.format("数据发送:%s", Utils.bytesToHex(os.toByteArray())));
     }
 }

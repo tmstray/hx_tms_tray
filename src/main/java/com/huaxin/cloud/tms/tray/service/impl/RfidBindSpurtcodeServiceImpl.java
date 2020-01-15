@@ -5,6 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.huaxin.cloud.tms.tray.common.security.LoginUser;
+import com.huaxin.cloud.tms.tray.common.security.TokenService;
+import com.huaxin.cloud.tms.tray.common.utils.DateUtils;
+import com.huaxin.cloud.tms.tray.common.utils.ServletUtils;
+import com.huaxin.cloud.tms.tray.common.utils.StringUtils;
+import com.huaxin.cloud.tms.tray.entity.SysUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -47,6 +53,8 @@ public class RfidBindSpurtcodeServiceImpl implements RfidBindSpurtcodeService {
     @Autowired
     private TrayInfoMapper trayInfoMapper;
 
+    @Autowired
+    private TokenService tokenService;
     /**
      * 查询RFID绑定喷码信息列表
      *
@@ -67,6 +75,10 @@ public class RfidBindSpurtcodeServiceImpl implements RfidBindSpurtcodeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insertRfidBindSpurtcode(String rfid) {
+        //获取登录用户信息
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        SysUser user = loginUser.getUser();
+
         //校验是否有该空托盘
         TrayInfo trayInfo = trayInfoMapper.selectTrayInfoByRfidAndRfidStatus(rfid);
         if (trayInfo == null) {
@@ -82,6 +94,9 @@ public class RfidBindSpurtcodeServiceImpl implements RfidBindSpurtcodeService {
         rfidBindSpurtcode.setUnit(Constants.UNIT);
         rfidBindSpurtcode.setVersion(Constants.VERSION);
         rfidBindSpurtcode.setCreateTime(new Date());
+        if(user!=null) {
+            rfidBindSpurtcode.setCreateBy(user.getUserName());
+        }
         rfidBindSpurtcode.setUpdateTime(null);
         //插入绑定信息
         rfidBindSpurtcodeMapper.insertSelective(rfidBindSpurtcode);
@@ -95,6 +110,11 @@ public class RfidBindSpurtcodeServiceImpl implements RfidBindSpurtcodeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateBind(String currentCode, String rfid) {
+
+        //获取登录用户信息
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        SysUser user = loginUser.getUser();
+
         RfidBindSpurtcode rfidBindSpurtcodeOrign = rfidBindSpurtcodeMapper.selectByCurrentCodeAndRfid(rfid);
         if (rfidBindSpurtcodeOrign == null) {
             log.error("该绑定记录不存在，不能修改");
@@ -104,6 +124,12 @@ public class RfidBindSpurtcodeServiceImpl implements RfidBindSpurtcodeService {
         if (currentCode.equals(rfidBindSpurtcodeOrign.getCurrentCode())) {
             return 1;
         }
+        // 设置更新时间和更新数据处理人：20200112
+        rfidBindSpurtcodeOrign.setUpdateTime(DateUtils.getNowDate());
+        if(user!=null) {
+            rfidBindSpurtcodeOrign.setUpdateBy(user.getUserName());
+        }
+
         //判断喷码是否是数据中喷码，更新喷码状态
         SpurtcodeInfo spurtcodeInfoOrign = spurtcodeInfoMapper.selectSpurtcodeByCurrentCode(currentCode);
         //如果喷码存在数据库中

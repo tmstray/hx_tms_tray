@@ -7,10 +7,7 @@ import com.huaxin.cloud.tms.tray.common.exception.BusinessException;
 import com.huaxin.cloud.tms.tray.common.exception.CustomException;
 import com.huaxin.cloud.tms.tray.common.result.ResultInfo;
 import com.huaxin.cloud.tms.tray.common.scheduled.SpurtCodeTask;
-import com.huaxin.cloud.tms.tray.dto.Request.ReqStartDTO;
-import com.huaxin.cloud.tms.tray.dto.Request.ReqUpdateCurrentNumber;
-import com.huaxin.cloud.tms.tray.dto.Request.ReqUpdateCurrentSpurtcode;
-import com.huaxin.cloud.tms.tray.dto.Request.ReqUpdateRuleDTO;
+import com.huaxin.cloud.tms.tray.dto.Request.*;
 import com.huaxin.cloud.tms.tray.entity.SpurtcodeInfo;
 import com.huaxin.cloud.tms.tray.service.SpurtcodeInfoService;
 import io.swagger.annotations.Api;
@@ -20,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +49,9 @@ public class SpurtcodeInfoController extends BaseController {
 
     @Autowired
     private SpurtcodeInfoService spurtcodeInfoService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Value("${spurtcode.number}")
     private int number;
@@ -164,5 +165,23 @@ public class SpurtcodeInfoController extends BaseController {
             throw new BusinessException("生产编号表数据错误");
         }
         return ResultInfo.success("修改成功", spurtcodeInfoService.updateRule(reqUpdateRuleDTO.getPrefixRule(), map));
+    }
+
+
+    /**
+     * 调用喷码机和计数器
+     * @param
+     * @return
+     */
+    @ApiOperation("调用喷码机计数器")
+    @PostMapping("/getCurrentCode")
+//    public void getCurrentCode(@RequestBody ReqCurrentCodeDTO codeDTO) {
+    public void getCurrentCode(Integer number) {
+//        Integer currentNumber =codeDTO.getNumber();
+        String zId = stringRedisTemplate.opsForValue().get("zId");
+        Map<String, Object> outNumMap = spurtcodeInfoService.selectOutNum(zId);
+        log.info("1：我被调用了，开始调用喷码机" );
+        spurtcodeInfoService.getCounter(number,outNumMap);
+        log.info("2：我被调用了，完成喷码机调用" );
     }
 }

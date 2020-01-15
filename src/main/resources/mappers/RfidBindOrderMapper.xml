@@ -28,7 +28,7 @@
     <result column="version" jdbcType="VARCHAR" property="version" />
     <collection  property="rfidBindOrderDetails"   javaType="java.util.List"        resultMap="RfidBindOrderDetailResult" />
   </resultMap>
-  
+
   <resultMap type="com.huaxin.cloud.tms.tray.entity.RfidBindOrderDetail" id="RfidBindOrderDetailResult">
         <result property="id"    column="id"    />
         <result property="currentCode"    column="current_code"    />
@@ -37,33 +37,33 @@
         <result property="deleteFlag"    column="delete_flag"    />
         <result property="pid"    column="pid"    />
   </resultMap>
-    
+
   <sql id="Base_Column_List">
-    select 
-	    id, meteriel_code, meteriel_desc, factory_code, factory_name, 
-	    waybill_no, license_plate, driver_name, driver_phone, order_no, product_name, 
-	    delivery_address, goods_number, shipment_status, binding_time, entering_time, 
-	    leave_time, remarks, create_by, create_time, update_by, update_time, delete_flag, version 
-    from 
+    select
+	    id, meteriel_code, meteriel_desc, factory_code, factory_name,
+	    waybill_no, license_plate, driver_name, driver_phone, order_no, product_name,
+	    delivery_address, goods_number, shipment_status, binding_time, entering_time,
+	    leave_time, remarks, create_by, create_time, update_by, update_time, delete_flag, version
+    from
     	tms_rfid_bind_order
   </sql>
-  
+
   <sql id="RfidBindOrderVo">
-    select 
-    	ro.id, ro.meteriel_code, ro.meteriel_desc, ro.factory_code, ro.factory_name, ro.waybill_no, 
-    	ro.license_plate, ro.driver_name, ro.driver_phone, ro.order_no, ro.product_name, ro.delivery_address, 
-    	ro.goods_number, ro.shipment_status, ro.binding_time, ro.entering_time, ro.leave_time, ro.remarks, ro.create_by, 
-    	ro.create_time, ro.update_by, ro.update_time, ro.delete_flag, ro.version, 
-    	rd.current_code, rd.rfid, rd.create_time, rd.delete_flag, rd.pid 
-	 from 
+    select
+    	ro.id, ro.meteriel_code, ro.meteriel_desc, ro.factory_code, ro.factory_name, ro.waybill_no,
+    	ro.license_plate, ro.driver_name, ro.driver_phone, ro.order_no, ro.product_name, ro.delivery_address,
+    	ro.goods_number, ro.shipment_status, ro.binding_time, ro.entering_time, ro.leave_time, ro.remarks, ro.create_by,
+    	ro.create_time, ro.update_by, ro.update_time, ro.delete_flag, ro.version,
+    	rd.current_code, rd.rfid, rd.create_time, rd.delete_flag, rd.pid
+	 from
 	    tms_rfid_bind_order ro left join tms_rfid_bind_order_detail rd on ro.id = rd.pid
   </sql>
-  
-  
-  
+
+
+
   <select id="selectRfidBindOrderList" parameterType="RfidBindOrder" resultMap="BaseResultMap">
         <include refid="RfidBindOrderVo"/>
-        <where>  
+        <where>
             <if test="meterielCode != null  and meterielCode != ''"> and ro.meteriel_code = #{meterielCode}</if>
             <if test="meterielDesc != null  and meterielDesc != ''"> and ro.meteriel_desc = #{meterielDesc}</if>
             <if test="factoryCode != null  and factoryCode != ''"> and ro.factory_code = #{factoryCode}</if>
@@ -86,24 +86,24 @@
         </where>
         and ro.delete_flag = 0 and rd.delete_flag = 0
     </select>
-  
+
   <select id="selectRfidBindOrderById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         <include refid="RfidBindOrderVo"/>
         where ro.id = #{id} and ro.delete_flag = 0 and rd.delete_flag = 0
   </select>
-  
-  
+
+
    <select id="selectOrderList" parameterType="RfidBindOrder" resultMap="BaseResultMap">
         <include refid="Base_Column_List"/>
         where delete_flag = 0
   </select>
-  
-  
+
+
   <select id="selectRfidBindOrderByOrderNo" parameterType="String" resultMap="BaseResultMap">
         <include refid="Base_Column_List"/>
         where order_no = #{orderNo} and delete_flag = 0
   </select>
-  
+
   <insert id="insertRfidBindOrder" parameterType="RfidBindOrder" useGeneratedKeys="true" keyProperty="id">
         insert into tms_rfid_bind_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -157,19 +157,23 @@
             <if test="version != null  and version != ''">#{version},</if>
          </trim>
     </insert>
-    
+
     <update id="updateShipmentStatus" parameterType="String">
  		update tms_rfid_bind_order set shipment_status = '1' where order_no = #{orderNo}
 	</update>
-	
+
 	<update id="updateEnteringTime" parameterType="String">
- 		update tms_rfid_bind_order set entering_time = sysdate() where order_no = #{orderNo}
+ 		update tms_rfid_bind_order
+ 		set entering_time = sysdate(),update_by=#{updateBy},update_time=sysdate()
+ 		where order_no = #{orderNo}
 	</update>
-	
+
 	<update id="updateLeaveTime" parameterType="String">
- 		update tms_rfid_bind_order set leave_time = sysdate() where order_no = #{orderNo}
+ 		update tms_rfid_bind_order
+ 		set leave_time = sysdate(),update_by=#{updateBy},update_time=sysdate()
+ 		where order_no = #{orderNo}
 	</update>
-	
+
     <update id="updateRfidBindOrder" parameterType="RfidBindOrder">
         update tms_rfid_bind_order
         <trim prefix="SET" suffixOverrides=",">
@@ -199,28 +203,29 @@
         </trim>
         where id = #{id}
     </update>
-  
+
   	<delete id="deleteRfidBindOrderById" parameterType="java.lang.Integer">
-        update tms_rfid_bind_order set delete_flag = 1 where id = #{id} 
+        update tms_rfid_bind_order set delete_flag = 1 where id = #{id}
     </delete>
-    
+
     <!-- 第一种情况 	oldCurrentCode != newCurrentCode && oldOrderNo ==  newOrderNo -->
     <update id="updateCurrentCode" parameterType="String">
  		UPDATE tms_rfid_bind_order o,
-		tms_rfid_bind_order_detail d 
+		tms_rfid_bind_order_detail d
 		SET d.current_code = #{newCurrentCode} where o.id=d.pid and d.delete_flag = 0 and o.order_no = #{newOrderNo}
 	</update>
-	
+
 	<!-- 第二种情况 	oldCurrentCode = newCurrentCode && oldOrderNo !=  newOrderNo -->
 	<update id="updateOrderNo" parameterType="String">
- 		update tms_rfid_bind_order set order_no = #{newOrderNo} where order_no = #{oldOrderNo}
+ 		update tms_rfid_bind_order set order_no = #{newOrderNo},update_by=#{updateBy},
+ 		update_time=sysdate() where order_no = #{oldOrderNo}
 	</update>
-	
+
 	<!-- 第三种情况 	oldCurrentCode ！= newCurrentCode && oldOrderNo !=  newOrderNo -->
 	<update id="updateOrderNoAndCurrentCode" parameterType="String">
  		UPDATE tms_rfid_bind_order o,
-		tms_rfid_bind_order_detail d 
+		tms_rfid_bind_order_detail d
 		SET d.current_code = #{newCurrentCode},o.order_no = #{newOrderNo} where o.id=d.pid and d.delete_flag = 0 and o.order_no = #{oldOrderNo}
 	</update>
-    
+
 </mapper>

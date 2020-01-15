@@ -17,6 +17,9 @@ import com.huaxin.cloud.tms.tray.service.SpurtcodeInfoService;
  * @Author lixin
  * @Date 2019/11/29 9:37
  * @Version 1.0
+ *
+ *
+ * 原始测试使用定时任务：暂时保留：20200113
  **/
 @Transactional(rollbackFor = Exception.class)
 public class SpurtCodeTask implements Runnable {
@@ -60,14 +63,14 @@ public class SpurtCodeTask implements Runnable {
                 //修改当前喷码状态，当前使用喷码->等待绑定喷码
                 spurtcodeInfoMapper.updateCurrentStatus();
                 //插入新的喷码数据
-                spurtcodeInfoService.beginGenerateSpurtcode(map);
+//                spurtcodeInfoService.beginGenerateSpurtcode(map);
             }else {
                 spurtcodeInfo.setCurrentNumber(currentNumber);
                 spurtcodeInfoMapper.updateByPrimaryKeySelective(spurtcodeInfo);
             }
          //更新失败，没有正在喷的喷码，生成一个新喷码，给喷码机使用
         } else {
-            spurtcodeInfoService.beginGenerateSpurtcode(map);
+//            spurtcodeInfoService.beginGenerateSpurtcode(map);
         }
         //数据库操作成功时自增流水号,保证mySql和redis一致性
             stringRedisTemplate.opsForValue().increment("number");

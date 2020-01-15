@@ -1,18 +1,14 @@
 package com.huaxin.cloud.tms.tray.service.impl;
 
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import com.github.pagehelper.util.StringUtil;
 import com.huaxin.cloud.tms.tray.common.annotation.DataSource;
 import com.huaxin.cloud.tms.tray.common.constant.Constants;
 import com.huaxin.cloud.tms.tray.common.enums.DataSourceType;
 import com.huaxin.cloud.tms.tray.common.exception.BusinessException;
+import com.huaxin.cloud.tms.tray.common.security.LoginUser;
+import com.huaxin.cloud.tms.tray.common.security.TokenService;
+import com.huaxin.cloud.tms.tray.common.utils.DateUtils;
+import com.huaxin.cloud.tms.tray.common.utils.ServletUtils;
 import com.huaxin.cloud.tms.tray.common.utils.StringUtils;
 import com.huaxin.cloud.tms.tray.dao.RfidBindOrderDetailMapper;
 import com.huaxin.cloud.tms.tray.dao.RfidBindOrderMapper;
@@ -21,9 +17,20 @@ import com.huaxin.cloud.tms.tray.dto.Request.RfidBindOrderAndDetailDTO;
 import com.huaxin.cloud.tms.tray.dto.Request.RfidBindOrderDetailDTO;
 import com.huaxin.cloud.tms.tray.entity.RfidBindOrder;
 import com.huaxin.cloud.tms.tray.entity.RfidBindOrderDetail;
+import com.huaxin.cloud.tms.tray.entity.SysUser;
 import com.huaxin.cloud.tms.tray.service.BillInfoService;
 import com.huaxin.cloud.tms.tray.service.RfidBindOrderService;
 import com.huaxin.cloud.tms.tray.service.TrayInfoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 /**
@@ -51,6 +58,9 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 
     @Autowired
     BillInfoService billInfoService;
+
+	@Autowired
+	private TokenService tokenService;
 
 	@Value("${spurtcode.factory-code}")
 	private String factoryCode;
@@ -113,8 +123,14 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
      */
     @Override
     public int insertRfidBindOrder(RfidBindOrder rfidBindOrder)throws Exception{
+		//获取登录用户信息
+		LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+		SysUser user = loginUser.getUser();
+
     	String orderNo = rfidBindOrder.getOrderNo();
     	RfidBindOrder rd = selectRfidBindOrderByOrderNo(orderNo);
+		rfidBindOrder.setCreateBy(user.getUserName());
+
     	if(StringUtils.isNotNull(rd)) {
     		throw new BusinessException("该订单已存在，请检查数据.");
     	}
@@ -135,12 +151,18 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
     @Transactional
     public int SecondBind(RfidBindOrderAndDetailDTO rfidBindOrderAndDetailDTO)throws Exception{
     	int result=0;
+
+		//获取登录用户信息
+		LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+		SysUser user = loginUser.getUser();
+
     	String oldOrderNo = rfidBindOrderAndDetailDTO.getOldOrderNo();
     	String oldCurrentCode = rfidBindOrderAndDetailDTO.getOldCurrentCode();
     	String orderNo = rfidBindOrderAndDetailDTO.getOrderNo();
     	String currentCode = rfidBindOrderAndDetailDTO.getCurrentCode();
     	String rfid = rfidBindOrderAndDetailDTO.getRfidBindOrderDetails().get(0).getRfid();
 
+    	// 测试手工设置的：正常上线后可以根据交货单获取数据：
 //        rfidBindOrderAndDetailDTO.setMeterielCode("PC.245");
 //        rfidBindOrderAndDetailDTO.setMeterielDesc("袋装水泥");
 		// 物料编码 需要根据刷DL卡 获取提货信息 同时需要返回对应的 物料信息
@@ -158,7 +180,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 		    		throw new BusinessException("该订单已存在，请检查数据.");
 		    	}
         		//第二种情况 	oldCurrentCode = newCurrentCode && oldOrderNo !=  newOrderNo
-				result=rfidBindOrderMapper.updateOrderNo(orderNo, oldOrderNo);
+				result=rfidBindOrderMapper.updateOrderNo(orderNo, oldOrderNo,user.getUserName());
         	}else if (!oldCurrentCode.equals(currentCode) && !oldOrderNo.equals(orderNo)) {
         		RfidBindOrder rd = selectRfidBindOrderByOrderNo(orderNo);
 		    	if(StringUtils.isNotNull(rd)) {
@@ -180,10 +202,18 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 		    	}
 				RfidBindOrder rfidBindOrderC = new RfidBindOrder();
 				BeanUtils.copyProperties(rfidBindOrderAndDetailDTO, rfidBindOrderC);
+				rfidBindOrderC.setCreateTime(DateUtils.getNowDate());
+				rfidBindOrderC.setCreateBy(user.getUserName());
 				result=rfidBindOrderMapper.insertRfidBindOrder(rfidBindOrderC);
-//                currentCode="1222222222222";
+
 				//插入订单明细表
 				for (RfidBindOrderDetail rfidBindOrderDetail : rfidBindOrderAndDetailDTO.getRfidBindOrderDetails()) {
+					//20200109 根据 Rfid 获取 当前托盘绑定的有效 水泥喷码
+					currentCode = rfidBindSpurtcodeMapper.selectCurrentCodeByRfid(rfidBindOrderDetail.getRfid());
+					if(StringUtil.isEmpty(currentCode)){
+						//测试期间使用 查不到对应的水泥喷码就初始化一个“
+						currentCode= DateUtils.dateTimeNow();
+					}
 					rfidBindOrderDetail.setCurrentCode(currentCode);
 					rfidBindOrderDetail.setRfid(rfidBindOrderDetail.getRfid());
 					rfidBindOrderDetail.setPid(rfidBindOrderC.getId());
@@ -197,21 +227,28 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 
 
     /**
-     * @param rfidBindOrder RFID绑定提货单信息
+     * @param rfidBindOrderAndDetailDTO RFID绑定提货单信息
      * @return 结果
      */
     @Override
     @Transactional
     public String addOrderAndDetail(RfidBindOrderAndDetailDTO rfidBindOrderAndDetailDTO)throws Exception{
-    	 //提货单号
+		//获取登录用户信息
+		LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+		SysUser user = loginUser.getUser();
+
+    	//提货单号
     	 String orderNo = rfidBindOrderAndDetailDTO.getOrderNo();
 		 RfidBindOrder rfidBindOrder = selectRfidBindOrderByOrderNo(orderNo);
     	 if(StringUtils.isNotNull(rfidBindOrder)) {
      		throw new BusinessException("该订单已存在，请检查数据.");
-     	    }
+    	 }
     	 //先插入订单表
     	 RfidBindOrder rfidBindOrderC =new RfidBindOrder();
     	 BeanUtils.copyProperties(rfidBindOrderAndDetailDTO, rfidBindOrderC);
+    	 rfidBindOrderC.setCreateTime(DateUtils.getNowDate());
+    	 rfidBindOrderC.setCreateBy(user.getUserName());
+
     	 rfidBindOrderMapper.insertRfidBindOrder(rfidBindOrderC);
 
 		StringBuilder successMsg = new StringBuilder();
@@ -261,7 +298,7 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
     /**
      * 修改RFID绑定提货单信息
      *
-     * @param rfidBindOrder RFID绑定提货单信息
+     * @param rfidBindOrderDetailDTOList RFID绑定提货单信息
      * @return 结果
      */
     @Override
@@ -343,25 +380,29 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
     /**
      *  更新进厂时间
      *
-     * @param tmsRfidBindOrder RFID绑定提货单信息
+     * @param orderNo RFID绑定提货单信息
      * @return 结果
      */
 	@Override
 	public int updateEnteringTime(String orderNo) throws Exception{
-
-		return rfidBindOrderMapper.updateEnteringTime(orderNo);
+		//获取登录用户信息
+		LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+		SysUser user = loginUser.getUser();
+		return rfidBindOrderMapper.updateEnteringTime(orderNo,user.getUserName());
 	}
 
 	/**
      *  更新出厂时间
      *
-     * @param tmsRfidBindOrder RFID绑定提货单信息
+     * @param orderNo RFID绑定提货单信息
      * @return 结果
      */
 	@Override
 	public int updateLeaveTime(String orderNo) throws Exception{
-
-		return rfidBindOrderMapper.updateLeaveTime(orderNo);
+		//获取登录用户信息
+		LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+		SysUser user = loginUser.getUser();
+		return rfidBindOrderMapper.updateLeaveTime(orderNo,user.getUserName());
 	}
 
 	/**
@@ -413,13 +454,15 @@ public class RfidBindOrderServiceImpl implements RfidBindOrderService
 	/**
      *  根据提货单号更新装运状态
      *
-     * @param tmsRfidBindOrder RFID绑定提货单信息
+     * @param orderNo RFID绑定提货单信息
      * @return 结果
      */
 	@Override
 	public int updateShipmentStatus(String orderNo) throws Exception{
-
-		return rfidBindOrderMapper.updateShipmentStatus(orderNo);
+		//获取登录用户信息
+		LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+		SysUser user = loginUser.getUser();
+		return rfidBindOrderMapper.updateShipmentStatus(orderNo,user.getUserName());
 	}
 
 	/**

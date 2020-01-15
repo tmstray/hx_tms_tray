@@ -1,7 +1,5 @@
 package com.huaxin.cloud.tms.tray.dto.Request;
 
-import org.springframework.web.bind.annotation.RequestParam;
-
 import javax.validation.constraints.Pattern;
 
 /**

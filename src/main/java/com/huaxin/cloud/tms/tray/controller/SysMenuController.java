@@ -52,7 +52,7 @@ public class SysMenuController extends BaseController
     /**
      * 根据菜单编号获取详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:menu:query')")
+//    @PreAuthorize("@ss.hasPermi('system:menu:query')")
     @ApiOperation(value = "获取菜单详细信息")
     @GetMapping(value = "/{menuId}")
     public ResultInfo getInfo(@PathVariable Long menuId)

@@ -92,8 +92,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 // 对于登录login 验证码captchaImage 允许匿名访问
 //                .antMatchers("/login", "/captchaImage").anonymous()
                 .antMatchers("/login").anonymous()
-                .antMatchers("/bill/*").anonymous()
-                .antMatchers("/order/secondBind/**").anonymous()
+//                .antMatchers("/transport/**").anonymous()
+                .antMatchers("/spurtcodes/getCurrentCode").anonymous()
+//                .antMatchers("/order/secondBind/**").anonymous()
+//                .antMatchers("/trayInfo/batchInsetTrayInfo").anonymous()
+//                .antMatchers("/first_bind/**").anonymous()
                 .antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
                 .permitAll()
                 .antMatchers(

@@ -1,9 +1,8 @@
 package com.huaxin.cloud.tms.tray.dto.Request;
 
-import org.hibernate.validator.constraints.Length;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import javax.validation.constraints.NotBlank;
+
+import org.hibernate.validator.constraints.Length;
 
 /**
  * @Description 报废第一次绑定请求实体

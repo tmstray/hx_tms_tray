@@ -19,7 +19,7 @@
         <result column="current_status" jdbcType="INTEGER" property="currentStatus"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, meteriel_code, meteriel_desc, factory_code, factory_name, current_code, current_number, 
+    id, meteriel_code, meteriel_desc, factory_code, factory_name, current_code, current_number,
     remarks, create_by, create_time, update_by, update_time, version, delete_flag,current_status
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -255,11 +255,22 @@
     </select>
     <!-- 通过装车道号，查询出厂编号工厂信息-->
     <select id="selectOutNum" resultType="java.util.Map">
-        select so.N_OutNum, so.N_Stock,so.N_Name,sf.F_ID,sf.F_Name
-        from tms_ztlines_info sz
-        left join tms_outnum_info so on sz.Z_StockNo = so.N_Stock
-        left join tms_factorys sf on so.N_Factory = sf.F_ID
-        where sz.Z_ID = #{zId}
+    SELECT
+	so.ID,
+	so.N_OutNum,
+	so.N_Stock,
+	so.N_Name,
+	sf.F_ID,
+	sf.F_Name
+FROM
+	tms_ztlines_info sz
+	LEFT JOIN tms_outnum_info so ON sz.Z_StockNo = so.N_Stock
+	LEFT JOIN tms_factorys sf ON so.N_Factory = sf.F_ID
+WHERE
+	sz.Z_ID = #{zId}
+	AND so.N_ZYType = 'Z1'
+	AND so.N_Active = 'Y'
+	and so.N_CusName = ''
     </select>
     <!-- 查询所有生产线接口-->
     <select id="selectZtlinesList" resultType="java.util.Map">

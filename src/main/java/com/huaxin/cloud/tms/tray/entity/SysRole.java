@@ -87,7 +87,6 @@ public class SysRole extends BaseEntity
         this.roleKey = roleKey;
     }
 
-    @NotBlank(message = "显示顺序不能为空")
     public String getRoleSort()
     {
         return roleSort;
